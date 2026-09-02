@@ -1,20 +1,23 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# نرم‌افزار تصمیم‌یار بازرگانی آتیه فولاد
 
-# Run and deploy your AI Studio app
+نسخه ۱۰ اتاق تصمیم معامله با تمرکز بر حکم اقتصادی، مرزهای مذاکره، جریان نقدی، ظرفیت منابع و تحلیل حساسیت.
 
-This contains everything you need to run your app locally.
+## اجرای مستقیم
 
-View your app in AI Studio: https://ai.studio/apps/drive/1-Wp2EEBTpS9EfQid4oWOiYGvsRKD9PQd
+صفحه منتشرشده GitHub Pages:
 
-## Run Locally
+https://amirrezasoleimani007.github.io/trade/
 
-**Prerequisites:**  Node.js
+برای اجرای آفلاین، فایل `index.html` را همراه پوشه `fonts` و فایل `atieh-logo.png` نگه دارید و با مرورگر باز کنید.
 
+## امکانات کلیدی نسخه ۱۰
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+- چهار KPI اصلی: سود، NPV، حاشیه سود و بازده سرمایه درگیر
+- نمودار آبشاری درآمد تا NPV
+- نمودار جریان نقدی و اوج نیاز نقدینگی
+- مرز اقتصادی خرید و فروش
+- حلقه‌های ظرفیت نقدینگی و ابزارهای اعتباری
+- Heatmap حساسیت با گام مستقل هر محور
+- خروجی Excel فرمول‌دار با جزئیات جریان نقدی و کنترل صحت
+
+ورودی‌های معامله عمداً خالی هستند و هیچ مثال عددی پیش‌فرض در برنامه وجود ندارد.
