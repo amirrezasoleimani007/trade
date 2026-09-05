@@ -1,14 +1,11 @@
-# تصمیم‌یار بازرگانی آتیه فولاد — نسخه ۱۲
+# تصمیم‌یار بازرگانی آتیه فولاد — نسخه ۱۱ اصلاح‌شده
 
 [اجرای نرم‌افزار](https://amirrezasoleimani007.github.io/trade/)
 
-برنامه فعال index.html است. موتور trade-engine.js و نمایش economics-view.js و economics-view.css همراه آن منتشر شده‌اند. فایل‌های TypeScript قدیمی در اجرای این صفحه نقش ندارند.
+برنامه فعال index.html است و از trade-engine.js و economics-view.js و economics-view.css استفاده می‌کند. فایل‌های TypeScript قدیمی این شاخه در اجرای آن نقش ندارند.
 
-شماره نسخه در سربرگ قابل مشاهده است. شرح اصلاحات و آزمون‌ها در RELEASE-v12.md و reports قرار دارد. روش محاسبه و محدودیت‌های اکسل ممیزی در RELEASE-v11.md است.
+شماره «نسخه ۱۱ اصلاح‌شده» در سربرگ دیده می‌شود؛ شناسه فنی انتشار 11.1 است.
+
+شرح تغییرات: RELEASE-v11-corrected.md؛ روش محاسبه و محدودیت‌ها: RELEASE-v11.md. گزارش‌های آزمون در reports قرار دارند. اکسل دفتر ممیزی فرمول‌دار است و کل رویدادها را با تغییر ورودی بازسازی نمی‌کند.
 
 برای اجرای آفلاین، کل شاخه gh-pages را دریافت و index.html را باز کنید.
-
-آزمون موتور: node tests/finance-v11.cjs
-آزمون اتصال رابط: node tests/integration-v12.cjs (نیازمند acorn)
-اکسل: node tests/export-v11.cjs audit.xlsx
-تطبیق اکسل: python3 tests/audit-workbook-v11.py audit.xlsx (نیازمند openpyxl)
