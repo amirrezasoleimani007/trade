@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "checks": 12,
+  "names": [
+    "Zero cash ceiling is not missing",
+    "Blank cash ceiling is unrestricted",
+    "VAT accounting effect differs from cash amount",
+    "All new VAT settings survive save and reload",
+    "Legacy defaults still load",
+    "Sensitivity isolates invalid VAT dates: npv",
+    "Sensitivity isolates invalid VAT dates: nominal",
+    "Sensitivity isolates invalid VAT dates: peak",
+    "Sensitivity isolates invalid VAT dates: annual",
+    "Unavailable period return does not fabricate rankings",
+    "Comparison uses period return rather than annual value",
+    "Same-day funding remains zero"
+  ]
+}
