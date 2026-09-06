@@ -1,0 +1,125 @@
+{
+  "status": "PASS",
+  "scenarios": [
+    {
+      "name": "received annual",
+      "profit": 38139780.8219178,
+      "npv": 25161080.72074275,
+      "feeIncome": 339780.8219178082,
+      "feeCost": 0,
+      "rows": 167
+    },
+    {
+      "name": "paid annual",
+      "profit": 37460219.17808219,
+      "npv": 24545366.194103405,
+      "feeIncome": 0,
+      "feeCost": 339780.8219178082,
+      "rows": 161
+    },
+    {
+      "name": "cash flat",
+      "profit": 32600000,
+      "npv": 29369279.53214763,
+      "feeIncome": 2600000,
+      "feeCost": 0,
+      "rows": 167
+    },
+    {
+      "name": "cash annual zero",
+      "profit": 30000000,
+      "npv": 26832626.9923016,
+      "feeIncome": 0,
+      "feeCost": 0,
+      "rows": 160
+    },
+    {
+      "name": "mixed sale",
+      "profit": 38511872.87671233,
+      "npv": 27872599.896345392,
+      "feeIncome": 312000,
+      "feeCost": 536127.1232876712,
+      "rows": 199
+    },
+    {
+      "name": "VAT and ECL",
+      "profit": 32314189.58904109,
+      "npv": 18160071.161502317,
+      "feeIncome": 339780.8219178082,
+      "feeCost": 0,
+      "rows": 181
+    },
+    {
+      "name": "VAT unrecoverable",
+      "profit": 29244899.068493143,
+      "npv": 16162369.366508693,
+      "feeIncome": 339780.8219178082,
+      "feeCost": 0,
+      "rows": 172
+    },
+    {
+      "name": "import LC",
+      "profit": 5416180.821917802,
+      "npv": 5460873.038028091,
+      "feeIncome": 339780.8219178082,
+      "feeCost": 0,
+      "rows": 216
+    },
+    {
+      "name": "export mixed credit",
+      "profit": 16943258.63013698,
+      "npv": 15905622.36212692,
+      "feeIncome": 339780.8219178082,
+      "feeCost": 0,
+      "rows": 233
+    },
+    {
+      "name": "zero",
+      "profit": 0,
+      "npv": 0,
+      "feeIncome": 0,
+      "feeCost": 0,
+      "rows": 158
+    },
+    {
+      "name": "loss",
+      "profit": -14990904.10958904,
+      "npv": -22977796.479542922,
+      "feeIncome": 209095.8904109589,
+      "feeCost": 0,
+      "rows": 167
+    },
+    {
+      "name": "small profit",
+      "profit": 0.009999990463256836,
+      "npv": -2436440.765396267,
+      "feeIncome": 0,
+      "feeCost": 0,
+      "rows": 160
+    },
+    {
+      "name": "large amounts",
+      "profit": 381397808219178140000,
+      "npv": 251610807207427440000,
+      "feeIncome": 3397808219178082000,
+      "feeCost": 0,
+      "rows": 167
+    },
+    {
+      "name": "long period",
+      "profit": 141693150.68493152,
+      "npv": -50149098.89875403,
+      "feeIncome": 7693150.684931506,
+      "feeCost": 0,
+      "rows": 167
+    },
+    {
+      "name": "all custom costs",
+      "profit": 38052975.73383561,
+      "npv": 25068072.56169214,
+      "feeIncome": 339780.8219178082,
+      "feeCost": 0,
+      "rows": 226
+    }
+  ]
+}

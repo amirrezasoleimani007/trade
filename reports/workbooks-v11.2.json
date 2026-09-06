@@ -1,0 +1,97 @@
+{
+  "status": "PASS",
+  "scenarios": 15,
+  "formulas": 2668,
+  "results": [
+    {
+      "scenario": "received annual",
+      "status": "PASS",
+      "sheets": 1,
+      "formulas_independently_evaluated": 149
+    },
+    {
+      "scenario": "paid annual",
+      "status": "PASS",
+      "sheets": 1,
+      "formulas_independently_evaluated": 144
+    },
+    {
+      "scenario": "cash flat",
+      "status": "PASS",
+      "sheets": 1,
+      "formulas_independently_evaluated": 149
+    },
+    {
+      "scenario": "cash annual zero",
+      "status": "PASS",
+      "sheets": 1,
+      "formulas_independently_evaluated": 139
+    },
+    {
+      "scenario": "mixed sale",
+      "status": "PASS",
+      "sheets": 1,
+      "formulas_independently_evaluated": 195
+    },
+    {
+      "scenario": "VAT and ECL",
+      "status": "PASS",
+      "sheets": 1,
+      "formulas_independently_evaluated": 225
+    },
+    {
+      "scenario": "VAT unrecoverable",
+      "status": "PASS",
+      "sheets": 1,
+      "formulas_independently_evaluated": 174
+    },
+    {
+      "scenario": "import LC",
+      "status": "PASS",
+      "sheets": 1,
+      "formulas_independently_evaluated": 256
+    },
+    {
+      "scenario": "export mixed credit",
+      "status": "PASS",
+      "sheets": 1,
+      "formulas_independently_evaluated": 252
+    },
+    {
+      "scenario": "zero",
+      "status": "PASS",
+      "sheets": 1,
+      "formulas_independently_evaluated": 127
+    },
+    {
+      "scenario": "loss",
+      "status": "PASS",
+      "sheets": 1,
+      "formulas_independently_evaluated": 149
+    },
+    {
+      "scenario": "small profit",
+      "status": "PASS",
+      "sheets": 1,
+      "formulas_independently_evaluated": 139
+    },
+    {
+      "scenario": "large amounts",
+      "status": "PASS",
+      "sheets": 1,
+      "formulas_independently_evaluated": 149
+    },
+    {
+      "scenario": "long period",
+      "status": "PASS",
+      "sheets": 1,
+      "formulas_independently_evaluated": 149
+    },
+    {
+      "scenario": "all custom costs",
+      "status": "PASS",
+      "sheets": 1,
+      "formulas_independently_evaluated": 272
+    }
+  ]
+}
