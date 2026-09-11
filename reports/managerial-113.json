@@ -1,0 +1,292 @@
+[
+  {
+    "name": "گندله؛ حاشیه دو درصد و وصول یک‌ماهه",
+    "assumptions": {
+      "hurdle": 35,
+      "vatRecoveryDay": 200,
+      "finLegs": [
+        {
+          "method": "cash",
+          "share": 100,
+          "due": 0,
+          "rate": 0,
+          "fee": 0,
+          "margin": 0
+        }
+      ],
+      "salesLegs": [
+        {
+          "share": 100,
+          "due": 0,
+          "rate": 0,
+          "fee": 0,
+          "margin": 0
+        }
+      ],
+      "commodity": "گندله؛ حاشیه دو درصد و وصول یک‌ماهه",
+      "qTon": 1000,
+      "buyTon": 6000000,
+      "sellTon": 6120000,
+      "holding": 30,
+      "startDay": 0,
+      "advance": 0,
+      "purchaseVat": 0,
+      "saleVat": 0,
+      "serviceVat": 0,
+      "safety": 0,
+      "shrink": 0,
+      "expectedCreditLoss": 0,
+      "inbound": 0,
+      "storage": 0,
+      "outbound": 0,
+      "vatUse": 0,
+      "vatSettle": 0,
+      "intFreight": 0,
+      "insurancePct": 0,
+      "customsPct": 0,
+      "transferPct": 0,
+      "salePrepayPct": 0,
+      "salePrepayDays": 0,
+      "foreignFreightDay": 0,
+      "foreignCustomsDay": 0,
+      "foreignVatDay": 0,
+      "buyFx": 1,
+      "sellFx": 1,
+      "customCosts": [],
+      "fundingMode": "intraday",
+      "vatCreditTiming": "scheduled",
+      "exportInsuranceBase": "goods",
+      "limits": {},
+      "vatCreditMode": "offset",
+      "vatCollectionMode": "receivable",
+      "vatSettlementDay": 30,
+      "vatCollectionDay": 0
+    },
+    "profit": 120000000,
+    "npv": -29110175.439339638,
+    "peak": 6000000000,
+    "capitalDays": 180000000000,
+    "periodReturn": 0.02,
+    "buyCeiling": {
+      "status": "converged",
+      "value": 5970889.82456066
+    },
+    "sellFloor": {
+      "status": "converged",
+      "value": 6149837.13967656
+    },
+    "decision": {
+      "economic": {
+        "label": "نامناسب",
+        "status": "bad"
+      },
+      "execution": "قابل اجرا",
+      "action": "عدم انجام معامله",
+      "secondary": [
+        "مذاکره برای تأمین حاشیه امن قیمت"
+      ],
+      "note": "ارزش فعلی خالص منفی است؛ انجام معامله با شرایط فعلی توصیه نمی‌شود.",
+      "cashGap": 0,
+      "facilityGaps": [],
+      "target": 5970889.82456066,
+      "economicCeiling": 5970889.82456066,
+      "executionNote": ""
+    }
+  },
+  {
+    "name": "آهن اسفنجی؛ حاشیه هشت درصد و وصول چهارماهه",
+    "assumptions": {
+      "hurdle": 35,
+      "vatRecoveryDay": 200,
+      "finLegs": [
+        {
+          "method": "cash",
+          "share": 100,
+          "due": 0,
+          "rate": 0,
+          "fee": 0,
+          "margin": 0
+        }
+      ],
+      "salesLegs": [
+        {
+          "share": 100,
+          "due": 0,
+          "rate": 0,
+          "fee": 0,
+          "margin": 0
+        }
+      ],
+      "commodity": "آهن اسفنجی؛ حاشیه هشت درصد و وصول چهارماهه",
+      "qTon": 1000,
+      "buyTon": 20000000,
+      "sellTon": 21600000,
+      "holding": 120,
+      "startDay": 0,
+      "advance": 0,
+      "purchaseVat": 0,
+      "saleVat": 0,
+      "serviceVat": 0,
+      "safety": 0,
+      "shrink": 0,
+      "expectedCreditLoss": 0,
+      "inbound": 0,
+      "storage": 0,
+      "outbound": 0,
+      "vatUse": 0,
+      "vatSettle": 0,
+      "intFreight": 0,
+      "insurancePct": 0,
+      "customsPct": 0,
+      "transferPct": 0,
+      "salePrepayPct": 0,
+      "salePrepayDays": 0,
+      "foreignFreightDay": 0,
+      "foreignCustomsDay": 0,
+      "foreignVatDay": 0,
+      "buyFx": 1,
+      "sellFx": 1,
+      "customCosts": [],
+      "fundingMode": "intraday",
+      "vatCreditTiming": "scheduled",
+      "exportInsuranceBase": "goods",
+      "limits": {},
+      "vatCreditMode": "offset",
+      "vatCollectionMode": "receivable",
+      "vatSettlementDay": 120,
+      "vatCollectionDay": 0
+    },
+    "profit": 1600000000,
+    "npv": -429393130.0410843,
+    "peak": 20000000000,
+    "capitalDays": 2400000000000,
+    "periodReturn": 0.08,
+    "buyCeiling": {
+      "status": "converged",
+      "value": 19570606.869958915
+    },
+    "sellFloor": {
+      "status": "converged",
+      "value": 22073919.468645837
+    },
+    "decision": {
+      "economic": {
+        "label": "نامناسب",
+        "status": "bad"
+      },
+      "execution": "قابل اجرا",
+      "action": "عدم انجام معامله",
+      "secondary": [
+        "مذاکره برای تأمین حاشیه امن قیمت"
+      ],
+      "note": "ارزش فعلی خالص منفی است؛ انجام معامله با شرایط فعلی توصیه نمی‌شود.",
+      "cashGap": 0,
+      "facilityGaps": [],
+      "target": 19570606.869958915,
+      "economicCeiling": 19570606.869958915,
+      "executionNote": ""
+    }
+  },
+  {
+    "name": "شمش؛ خرید چکی و فروش نقدی با محدودیت ظرفیت",
+    "assumptions": {
+      "hurdle": 35,
+      "vatRecoveryDay": 200,
+      "finLegs": [
+        {
+          "method": "cheque",
+          "share": 100,
+          "due": 90,
+          "rate": 2,
+          "costMode": "monthly",
+          "fee": 1,
+          "feeMode": "annual",
+          "margin": 0
+        }
+      ],
+      "salesLegs": [
+        {
+          "share": 100,
+          "due": 0,
+          "rate": 0,
+          "fee": 0,
+          "margin": 0
+        }
+      ],
+      "commodity": "شمش؛ خرید چکی و فروش نقدی با محدودیت ظرفیت",
+      "qTon": 1000,
+      "buyTon": 35000000,
+      "sellTon": 38000000,
+      "holding": 30,
+      "limits": {
+        "cheque": 25000000000,
+        "cash": 500000000
+      },
+      "startDay": 0,
+      "advance": 0,
+      "purchaseVat": 0,
+      "saleVat": 0,
+      "serviceVat": 0,
+      "safety": 0,
+      "shrink": 0,
+      "expectedCreditLoss": 0,
+      "inbound": 0,
+      "storage": 0,
+      "outbound": 0,
+      "vatUse": 0,
+      "vatSettle": 0,
+      "intFreight": 0,
+      "insurancePct": 0,
+      "customsPct": 0,
+      "transferPct": 0,
+      "salePrepayPct": 0,
+      "salePrepayDays": 0,
+      "foreignFreightDay": 0,
+      "foreignCustomsDay": 0,
+      "foreignVatDay": 0,
+      "buyFx": 1,
+      "sellFx": 1,
+      "customCosts": [],
+      "fundingMode": "intraday",
+      "vatCreditTiming": "scheduled",
+      "exportInsuranceBase": "goods",
+      "vatCreditMode": "offset",
+      "vatCollectionMode": "receivable",
+      "vatSettlementDay": 30,
+      "vatCollectionDay": 0
+    },
+    "profit": 808520547.9452057,
+    "npv": 2528897832.954017,
+    "peak": 91479452.05479452,
+    "capitalDays": 2744383561.6438355,
+    "periodReturn": 8.838274932614558,
+    "buyCeiling": {
+      "status": "converged",
+      "value": 37562187.62873621
+    },
+    "sellFloor": {
+      "status": "converged",
+      "value": 35407948.36407531
+    },
+    "decision": {
+      "economic": {
+        "label": "مناسب",
+        "status": "good"
+      },
+      "execution": "نیازمند تأمین مالی",
+      "action": "اصلاح ساختار تأمین مالی",
+      "secondary": [],
+      "note": "اقتصاد معامله مثبت است، اما نقدینگی یا ظرفیت ابزار اعتباری کافی نیست؛ تأمین منابع پیش از معامله اولویت دارد. کسری قابل رفع: ۱۲٬۱۰۰٬۰۰۰٬۰۰۰ تومان ظرفیت چک.",
+      "cashGap": 0,
+      "facilityGaps": [
+        {
+          "method": "cheque",
+          "amount": 12100000000
+        }
+      ],
+      "target": 37562187.62873621,
+      "economicCeiling": 37562187.62873621,
+      "executionNote": "اجرای معامله مشروط به رفع کسری منابع است."
+    }
+  }
+]

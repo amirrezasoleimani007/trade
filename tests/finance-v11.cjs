@@ -1,7 +1,7 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
-const ctx={};vm.createContext(ctx);vm.runInContext(fs.readFileSync('public/trade-engine.js','utf8'),ctx);vm.runInContext(fs.readFileSync('public/economics-view.js','utf8'),ctx);
+const ctx={};vm.createContext(ctx);vm.runInContext(fs.readFileSync('trade-engine.js','utf8'),ctx);vm.runInContext(fs.readFileSync('economics-view.js','utf8'),ctx);
 const E=ctx.TradeEngine,report=[];
-const base={qTon:100,buyTon:1e6,sellTon:1.2e6,holding:30,hurdle:0,finLegs:[{method:'cash',share:100}],salesLegs:[{share:100,due:0,markup:0}],limits:{cash:null,cheque:null,lc:null,boe:null},vatRecoveryDay:5000};
+const base={fundingMode:'daily',qTon:100,buyTon:1e6,sellTon:1.2e6,holding:30,hurdle:0,finLegs:[{method:'cash',share:100}],salesLegs:[{share:100,due:0,markup:0}],limits:{cash:null,cheque:null,lc:null,boe:null},vatRecoveryDay:5000};
 function near(a,b,msg){assert(Math.abs(a-b)<=Math.max(1e-6,Math.abs(b)*1e-10),msg+': '+a+' != '+b)}
 function run(name,patch,check){const d={...base,...patch},r=E.simulate(d);check(r);near(r.nominal+r.economics.timeValueEffect,r.npv,'NPV bridge');near(r.nominal,r.events.reduce((s,e)=>s+e.econ,0),'cash profit');if(!d.hurdle)near(r.npv,r.nominal,'zero discount');assert(!/NaN|Infinity|undefined/.test(ctx.EconomicsView.render(r)));report.push({name,profit:r.nominal,npv:r.npv,peak:r.peak,margin:r.profitMargin,result:'PASS'});return r;}
 run('Cash baseline',{},r=>near(r.nominal,20e6,'cash profit'));

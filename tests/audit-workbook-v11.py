@@ -80,3 +80,4 @@ for s in w:
             else:assert actual==(expected if expected is not None else ''),(s.title,c.coordinate,actual,expected)
             count+=1
 print(json.dumps({'status':'PASS','sheets':len(w.sheetnames),'formulas_independently_evaluated':count}))
+

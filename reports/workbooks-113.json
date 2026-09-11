@@ -1,0 +1,201 @@
+[
+  {
+    "scenario": 0,
+    "status": "PASS",
+    "sheets": 1,
+    "formulas_independently_evaluated": 154,
+    "engine": {
+      "bytes": 104440,
+      "profit": 20000000,
+      "npv": 17076271.069816858,
+      "peak": 100000000,
+      "finCost": 0
+    }
+  },
+  {
+    "scenario": 1,
+    "status": "PASS",
+    "sheets": 1,
+    "formulas_independently_evaluated": 164,
+    "engine": {
+      "bytes": 108762,
+      "profit": 27513643.83561644,
+      "npv": 15533305.280685615,
+      "peak": 100000000,
+      "finCost": 0
+    }
+  },
+  {
+    "scenario": 3,
+    "status": "PASS",
+    "sheets": 1,
+    "formulas_independently_evaluated": 206,
+    "engine": {
+      "bytes": 122296,
+      "profit": 21252273.97260274,
+      "npv": 16119309.510351505,
+      "peak": 116261369.8630137,
+      "finCost": 6261369.863013699,
+      "fee": 261369.8630136986
+    }
+  },
+  {
+    "scenario": 9,
+    "status": "PASS",
+    "sheets": 1,
+    "formulas_independently_evaluated": 182,
+    "engine": {
+      "bytes": 113468,
+      "profit": 26010915.068493158,
+      "npv": 16230124.182731155,
+      "peak": 100000000,
+      "finCost": 0
+    }
+  },
+  {
+    "scenario": 10,
+    "status": "PASS",
+    "sheets": 1,
+    "formulas_independently_evaluated": 201,
+    "engine": {
+      "bytes": 118716,
+      "profit": 14990904.10958904,
+      "npv": 17545074.45354958,
+      "peak": 28209095.89041096,
+      "finCost": 5009095.890410959,
+      "fee": 209095.8904109589
+    }
+  },
+  {
+    "scenario": 12,
+    "status": "PASS",
+    "sheets": 1,
+    "formulas_independently_evaluated": 196,
+    "engine": {
+      "bytes": 117319,
+      "profit": 10820000,
+      "npv": 14743645.162496448,
+      "peak": 13180000,
+      "finCost": 9180000,
+      "fee": 3180000
+    }
+  },
+  {
+    "scenario": 15,
+    "status": "PASS",
+    "sheets": 1,
+    "formulas_independently_evaluated": 164,
+    "engine": {
+      "bytes": 108221,
+      "profit": 31016000,
+      "npv": 18706603.225673016,
+      "peak": 100000000,
+      "finCost": 0
+    }
+  },
+  {
+    "scenario": 20,
+    "status": "PASS",
+    "sheets": 1,
+    "formulas_independently_evaluated": 169,
+    "engine": {
+      "bytes": 106648,
+      "profit": 20000000,
+      "npv": 16832626.9923016,
+      "peak": 112000000,
+      "finCost": 0
+    }
+  },
+  {
+    "scenario": 21,
+    "status": "PASS",
+    "sheets": 1,
+    "formulas_independently_evaluated": 207,
+    "engine": {
+      "bytes": 121822,
+      "profit": 26313643.83561644,
+      "npv": 4420046.339223347,
+      "peak": 111200000,
+      "finCost": 0
+    }
+  },
+  {
+    "scenario": 26,
+    "status": "PASS",
+    "sheets": 1,
+    "formulas_independently_evaluated": 154,
+    "engine": {
+      "bytes": 104515,
+      "profit": -20000000,
+      "npv": -21949152.62012209,
+      "peak": 100000000,
+      "finCost": 0
+    }
+  },
+  {
+    "scenario": 30,
+    "status": "PASS",
+    "sheets": 1,
+    "formulas_independently_evaluated": 188,
+    "engine": {
+      "bytes": 117254,
+      "profit": 13738630.1369863,
+      "npv": 12026786.613816395,
+      "peak": 116261369.8630137,
+      "finCost": 6261369.863013699,
+      "fee": 261369.8630136986
+    }
+  },
+  {
+    "scenario": 31,
+    "status": "PASS",
+    "sheets": 1,
+    "formulas_independently_evaluated": 242,
+    "engine": {
+      "bytes": 143747,
+      "profit": 28993293.150684923,
+      "npv": 17645483.687820844,
+      "peak": 100000000,
+      "finCost": 0
+    }
+  },
+  {
+    "scenario": 32,
+    "status": "PASS",
+    "sheets": 1,
+    "formulas_independently_evaluated": 164,
+    "engine": {
+      "bytes": 108748,
+      "profit": 27495890.4109589,
+      "npv": 15517219.850381538,
+      "peak": 100000000,
+      "finCost": 0
+    }
+  },
+  {
+    "scenario": 33,
+    "status": "PASS",
+    "sheets": 1,
+    "formulas_independently_evaluated": 164,
+    "engine": {
+      "bytes": 105932,
+      "profit": 20000000,
+      "npv": 16832626.9923016,
+      "peak": 110000000,
+      "finCost": 0
+    }
+  },
+  {
+    "scenario": 34,
+    "status": "PASS",
+    "sheets": 1,
+    "formulas_independently_evaluated": 159,
+    "engine": {
+      "bytes": 105224,
+      "profit": 10000000,
+      "npv": 7076271.069816858,
+      "peak": 110000000,
+      "finCost": 0
+    }
+  }
+]

@@ -22,3 +22,4 @@ function render(r){
 }
 root.EconomicsView={render};
 })(typeof window==='undefined'?globalThis:window);
+

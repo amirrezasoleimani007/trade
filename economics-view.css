@@ -2,3 +2,4 @@
 @media(max-width:760px){.economics-head{grid-template-columns:1fr;gap:14px}.economics-head>div{padding-bottom:10px;border-bottom:1px solid #edf1f5}.economics-head strong{font-size:23px}.economics-layout{grid-template-columns:1fr;gap:20px}.economics-time{padding:18px}.economics-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 48px;gap:7px}.economics-row>span:first-child{align-items:flex-start}.economics-v11{overflow-wrap:anywhere}.economics-time .economics-total{font-size:18px}}
 @media(prefers-reduced-motion:reduce){.economics-v11 *{transition:none!important;animation:none!important}}
 .economics-row>bdi:last-child{overflow-wrap:normal;white-space:nowrap}.economics-row>bdi:last-child{font-size:13px}@media(max-width:760px){.economics-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 72px}.economics-row>bdi:last-child{white-space:normal;word-break:normal}}
+
