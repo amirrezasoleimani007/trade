@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="theme-color" content="#071827" />
+<title>سامانه هوشمند خط‌مشی سرمایه‌گذاری آتیه فولاد</title>
+<style>
+@font-face{font-family:Vazirmatn;src:url('/trade/fonts/vazirmatn-400.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:Vazirmatn;src:url('/trade/fonts/vazirmatn-600.woff2') format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:Vazirmatn;src:url('/trade/fonts/vazirmatn-800.woff2') format('woff2');font-weight:800;font-display:swap}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Vazirmatn,Tahoma,sans-serif;background:#071827;color:#fff}body{min-height:100vh}
+.header{height:88px;display:flex;align-items:center;justify-content:space-between;padding:0 4vw;background:#f7f5f0;border-bottom:1px solid #d3d8dc;color:#10283d;position:sticky;top:0;z-index:20}.brand{display:flex;align-items:center;gap:15px}.brand img{width:55px;height:55px;object-fit:contain}.brand-text{display:flex;flex-direction:column}.brand-text b{font-size:16px}.brand-text small{color:#637585;font-size:12px}.status{display:flex;align-items:center;gap:9px;color:#637585;font-size:12px}.status i{width:9px;height:9px;border-radius:50%;background:#42a282;box-shadow:0 0 0 6px #42a28215}
+.entry{position:relative;min-height:calc(100vh - 88px);overflow:hidden;padding:58px 5vw 38px;background:linear-gradient(125deg,#071827 0%,#0b2b46 62%,#0b2035 100%)}.entry:before{content:"";position:absolute;inset:0;opacity:.14;background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:64px 64px;mask-image:linear-gradient(to bottom,#000,transparent 86%)}.aura{position:absolute;border-radius:50%;filter:blur(10px);pointer-events:none}.a1{width:44vw;height:44vw;left:-18vw;top:-22vw;background:radial-gradient(circle,#1f7fc066,transparent 67%)}.a2{width:38vw;height:38vw;right:-16vw;bottom:-22vw;background:radial-gradient(circle,#d4a14d42,transparent 68%)}
+.intro,.layout,.foot{position:relative;z-index:2;max-width:1460px;margin-inline:auto}.intro{max-width:1000px;text-align:center}.overline{display:inline-flex;align-items:center;gap:9px;color:#d4a14d;font-size:14px;font-weight:800}.overline:before{content:"";width:28px;height:2px;background:currentColor;border-radius:9px}.intro h1{margin:14px 0 15px;font-size:clamp(38px,4.8vw,70px);line-height:1.28;letter-spacing:-2px}.intro p{max-width:790px;margin:0 auto;color:#c6d6e2;font-size:17px;line-height:2}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 280px minmax(0,1fr);align-items:center;gap:30px;margin-top:45px}.card{position:relative;min-height:315px;display:grid;grid-template-columns:70px 1fr;grid-template-rows:auto 1fr auto;gap:8px 18px;padding:34px;text-decoration:none;text-align:right;color:#fff;border:1px solid #ffffff26;border-radius:28px;background:linear-gradient(140deg,#ffffff12,#ffffff06);backdrop-filter:blur(15px);overflow:hidden;transition:.35s}.card:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 12% 20%,#3b98d727,transparent 45%);opacity:0;transition:.35s}.card.growth:before{background:radial-gradient(circle at 12% 20%,#d4a14d36,transparent 45%)}.card:hover{transform:translateY(-8px);border-color:#ffffff57;box-shadow:0 30px 80px #0005}.card:hover:before{opacity:1}.num{position:absolute;left:28px;top:17px;font-size:70px;font-weight:800;line-height:1;color:#ffffff0d}.icon{grid-row:1/3;width:64px;height:64px;display:grid;place-items:center;border-radius:20px;background:#1674ca22;border:1px solid #56a7dd3d;color:#76c4fa}.growth .icon{background:#d4a14d20;border-color:#e1b86b42;color:#f2ca82}.icon svg{width:30px;height:30px}.card small{color:#87a8bf;font-size:14px}.card h2{margin:2px 0 7px;font-size:29px}.card p{margin:0;color:#bdceda;font-size:15px;line-height:1.95}.action{grid-column:1/3;display:flex;align-items:center;justify-content:flex-end;gap:10px;padding-top:20px;border-top:1px solid #ffffff16;color:#fff;font-weight:700}.action svg{width:18px;transition:.2s}.card:hover .action svg{transform:translateX(-5px)}
+.orbit{position:relative;width:260px;height:260px;display:grid;place-items:center;justify-self:center;isolation:isolate}.orbit:before{content:"";position:absolute;inset:24px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#ffffff2b 0,transparent 24%),radial-gradient(circle,#123e5a 0 43%,#0a263a 44% 63%,#061827 64%);box-shadow:0 26px 65px #0007,inset 0 0 0 1px #ffffff18,inset 0 0 38px #2d88b93b;z-index:-2}.ring{position:absolute;border-radius:50%;pointer-events:none}.outer{inset:7px;border:1px solid #f2cd8870;border-top-color:#f2cd88;border-right-color:#48a1d8;box-shadow:0 0 26px #2f88bd28;animation:spin 13s linear infinite}.inner{inset:38px;border:1px dashed #ffffff38;border-left-color:#d4a14d;border-bottom-color:#d4a14d;animation:reverse 9s linear infinite}.outer:before,.outer:after{content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:#f2cd88;box-shadow:0 0 0 6px #f2cd8813,0 0 18px #f2cd88}.outer:before{top:27px;right:25px}.outer:after{bottom:27px;left:25px;background:#55a9da;box-shadow:0 0 0 6px #55a9da15,0 0 18px #55a9da}.core{width:132px;height:132px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:50%;background:linear-gradient(145deg,#0d314a,#0a2134);border:1px solid #ffffff1c;box-shadow:inset 0 0 30px #1b638c35;color:#fff;text-align:center}.core small{font-size:10px;color:#8fb2c8}.core strong{font-size:38px;line-height:1.15;color:#f2cd88;letter-spacing:1px}.core span{font-size:10px;color:#d4e2ea}.label{position:absolute;padding:6px 9px;border:1px solid #ffffff18;border-radius:9px;background:#071827d9;color:#c6d8e3;font-size:10px;white-space:nowrap;box-shadow:0 8px 25px #0003}.top{top:-2px;left:50%;transform:translateX(-50%)}.left{left:-38px;bottom:43px}.right{right:-43px;bottom:43px}@keyframes spin{to{transform:rotate(360deg)}}@keyframes reverse{to{transform:rotate(-360deg)}}
+.foot{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:30px;color:#7997ab;font-size:12px;letter-spacing:.08em}.foot i{width:40px;height:1px;background:#6b8496}.note{position:relative;z-index:2;max-width:760px;margin:24px auto 0;padding:10px 14px;border:1px solid #ffffff12;border-radius:12px;background:#ffffff08;color:#8fa9ba;text-align:center;font-size:11px}
+@media(max-width:1150px){.layout{grid-template-columns:1fr 220px 1fr;gap:18px}.orbit{width:210px;height:210px}.core{width:108px;height:108px}.core strong{font-size:31px}.left{left:-18px}.right{right:-22px}.card{padding:27px}}
+@media(max-width:900px){.header{height:auto;min-height:78px;padding:10px 18px}.status{display:none}.brand img{width:48px;height:48px}.brand-text b{font-size:14px}.entry{padding:42px 20px 30px}.intro h1{font-size:38px}.intro p{font-size:15px}.layout{grid-template-columns:1fr;margin-top:30px}.orbit{grid-row:1;width:230px;height:230px;margin:4px auto 8px}.card{min-height:250px}.left{left:-22px}.right{right:-27px}}
+@media(prefers-reduced-motion:reduce){.outer,.inner{animation:none}}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="brand"><img src="/trade/atieh-logo.png" alt="آتیه فولاد"><div class="brand-text"><b>سامانه هوشمند خط‌مشی سرمایه‌گذاری</b><small>گروه سرمایه‌گذاری آتیه فولاد نقش جهان</small></div></div>
+  <div class="status"><i></i><span>نسخه آنلاین v15.1 — صفحه اصلی بازطراحی‌شده</span></div>
+</header>
+<main class="entry">
+  <div class="aura a1"></div><div class="aura a2"></div>
+  <section class="intro">
+    <span class="overline">مرکز تصمیم‌گیری سرمایه‌گذاری</span>
+    <h1>از شناخت واقعیت امروز<br>تا انتخاب مسیر رشد فردا</h1>
+    <p>دو مسیر روشن برای فهم پرتفوی موجود و کشف فرصت‌های جدید؛ مبتنی بر داده، قابل ردیابی و آماده تصمیم مدیریتی.</p>
+  </section>
+  <section class="layout">
+    <a class="card" href="https://atieh-investment-os.amirreza-soleimani11.chatgpt.site" target="_blank" rel="noopener">
+      <span class="num">۰۱</span>
+      <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg></span>
+      <div><small>مسیر شناخت</small><h2>روایت امروز</h2><p>پرتفوی، عملکرد مالی، بازار، تحلیل چهارگانه راهبردی، ماتریس مک‌کنزی و جمع‌بندی مدیریتی</p></div>
+      <span class="action">ورود به روایت امروز <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></span>
+    </a>
+    <div class="orbit" aria-label="چرخه تصمیم‌گیری سرمایه‌گذاری">
+      <div class="ring outer"></div><div class="ring inner"></div>
+      <div class="core"><small>هسته تصمیم</small><strong>IPS</strong><span>خط‌مشی سرمایه‌گذاری</span></div>
+      <span class="label top">الان کجا هستیم؟</span><span class="label left">چطور برویم؟</span><span class="label right">کجا باید برویم؟</span>
+    </div>
+    <a class="card growth" href="https://atieh-investment-os.amirreza-soleimani11.chatgpt.site" target="_blank" rel="noopener">
+      <span class="num">۰۲</span>
+      <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-9"/><path d="M15 6h6v6"/></svg></span>
+      <div><small>مسیر آینده</small><h2>شناسایی پتانسیل‌های رشد</h2><p>رتبه‌بندی ۷۷ فرصت، سنجش تناسب راهبردی و جست‌وجوی طبقه‌بندی فعالیت‌ها</p></div>
+      <span class="action">ورود به موتور رشد <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></span>
+    </a>
+  </section>
+  <div class="foot"><span>فرصت</span><i></i><span>تناسب راهبردی</span><i></i><span>تصمیم</span></div>
+  <div class="note">صفحه اصلی جدید آنلاین است؛ دکمه‌های دو مسیر به نسخه کامل فعلی سامانه متصل هستند.</div>
+</main>
+</body>
+</html>
