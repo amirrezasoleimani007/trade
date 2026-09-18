@@ -1,4 +1,4 @@
-/* Atieh v11 — contractual scenario model; no statutory tax assumptions. */
+/* Atieh v12 — simplified contractual cash-structure model; no statutory tax assumptions. */
 (function(root){
 'use strict';
 const pct=x=>Number(x||0)/100;
@@ -12,11 +12,11 @@ function normalize(input){
  if(d.shrink>=100)throw Error('افت باید کمتر از ۱۰۰٪ باشد.');
  d.buyFx=d.buyFx==null?1:Number(d.buyFx);d.sellFx=d.sellFx==null?1:Number(d.sellFx);for(const k of ['buyFx','sellFx'])if(!Number.isFinite(d[k])||d[k]<=0)throw Error('نرخ تبدیل ارز باید مثبت و معتبر باشد.');
  d.finLegs=d.finLegs||[{method:'cash',share:100}];d.salesLegs=d.salesLegs||[{share:100,due:0,markup:0}];d.customCosts=d.customCosts||[];
- [d.finLegs,d.salesLegs].forEach(legs=>{if(Math.abs(sum(legs.map(l=>Number(l.share)))-100)>1e-6)throw Error('جمع سهم روش‌ها باید ۱۰۰٪ باشد.');legs.forEach(l=>{['share','due','rate','fee','margin'].forEach(k=>{l[k]=Number(l[k]||0);if(!Number.isFinite(l[k])||l[k]<0)throw Error('شرایط ابزار مالی نامعتبر است.');});if(l.margin>100||l.share>100)throw Error('درصد ابزار نامعتبر است.');if(l.markup!=null&&(!Number.isFinite(l.markup)||l.markup<=-100))throw Error('اضافه‌قیمت فروش نامعتبر است.');});});
- d.salesLegs.forEach(l=>{[['markupMode',['flat','monthly','annual']],['feeMode',['flat','monthly','annual']],['feeBaseMode',['principal','receivable']],['feeDirection',['received','paid']],['feeTiming',['delivery','collection']]].forEach(([k,values])=>{if(l[k]!=null&&!values.includes(l[k]))throw Error('شرایط کارمزد فروش نامعتبر است: '+k)});});
+ [d.finLegs,d.salesLegs].forEach(legs=>{if(Math.abs(sum(legs.map(l=>Number(l.share)))-100)>1e-6)throw Error('جمع سهم روش‌ها باید ۱۰۰٪ باشد.');legs.forEach(l=>{['share','due','rate','fee','margin'].forEach(k=>{l[k]=Number(l[k]||0);if(!Number.isFinite(l[k])||l[k]<0)throw Error('شرایط ابزار مالی نامعتبر است.');});if(l.margin>100||l.share>100)throw Error('درصد ابزار نامعتبر است.');if(l.markup!=null){l.markup=Number(l.markup);if(!Number.isFinite(l.markup)||l.markup<=-100)throw Error('اضافه‌قیمت فروش نامعتبر است.');}});});
+ d.salesLegs.forEach(l=>{if((l.method||'')==='cash'){l.due=0;l.markup=0;l.markupMode='flat';} [['markupMode',['flat','monthly','annual']],['feeMode',['flat','monthly','annual']],['feeBaseMode',['principal','receivable']],['feeDirection',['received','paid']],['feeTiming',['delivery','collection']]].forEach(([k,values])=>{if(l[k]!=null&&!values.includes(l[k]))throw Error('شرایط کارمزد فروش نامعتبر است: '+k)});});
  d.fundingMode=d.fundingMode||'intraday';
  if(!['daily','intraday'].includes(d.fundingMode))throw Error('روش نقدینگی نامعتبر است.');
- d.finLegs.forEach(l=>{if(!['cash','lc','cheque','boe'].includes(l.method))throw Error('ابزار خرید نامعتبر است.');for(const k of ['costMode','feeMode'])if(l[k]!=null&&!['flat','monthly','annual'].includes(l[k]))throw Error('نوع نرخ خرید نامعتبر است.');});
+ d.finLegs.forEach(l=>{if(!['cash','lc','cheque','boe'].includes(l.method))throw Error('ابزار خرید نامعتبر است.');for(const k of ['costMode','feeMode'])if(l[k]!=null&&!['flat','monthly','annual'].includes(l[k]))throw Error('نوع نرخ خرید نامعتبر است.');if(l.feeBaseMode!=null&&!['facility','total'].includes(l.feeBaseMode))throw Error('مبنای کارمزد خرید نامعتبر است.');});
  if(d.tradeType==='import'&&d.foreignTimingPreset==='custom'&&(d.foreignCustomsDay>d.holding||d.foreignVatDay>d.holding||d.foreignVatDay<d.foreignCustomsDay))throw Error('زمان گمرک و VAT واردات نامعتبر است.');
  if(d.salePrepayPct>0&&d.salePrepayDays>d.holding)throw Error('پیش‌دریافت قبل از شروع معامله است.');
  [...d.salesLegs,...d.finLegs].forEach(l=>{if(l.fee>100)throw Error('نرخ کارمزد خارج از محدوده است.');});
@@ -35,16 +35,17 @@ function normalize(input){
 function financingLeg(p,v,l){
  const financedVAT=l.vatFinanced?v:0,facilityPrincipal=p+financedVAT,rateBase=p+(l.chargeVat?financedVAT:0);
  const financeMarkup=rateBase*pct(l.rate)*(l.costMode==='flat'?1:l.costMode==='annual'?l.due/365:l.due/30);
- const feeBase=facilityPrincipal+financeMarkup,feeMode=l.feeMode||'annual',fee=feeBase*pct(l.fee)*timeFactor(feeMode,l.due);
+ const feeBaseMode=l.feeBaseMode||'total',feeBase=feeBaseMode==='facility'?facilityPrincipal:facilityPrincipal+financeMarkup,feeMode=l.feeMode||'annual',fee=feeBase*pct(l.fee)*timeFactor(feeMode,l.due);
  const financedFee=l.feeFinanced?fee:0,faceValue=facilityPrincipal+financeMarkup+financedFee,marginBase=facilityPrincipal,marginAmount=marginBase*pct(l.margin);
- return {method:l.method,share:l.share,days:l.due,principal:p,financedVAT,facilityPrincipal,rateBase,rate:l.rate,rateMode:l.costMode||'monthly',financeMarkup,feeBase,feeRate:l.fee,feeMode,fee,financedFee,faceValue,marginBase,marginRate:l.margin,marginAmount,cashAtInception:v-financedVAT+fee-financedFee+marginAmount,amountAtMaturity:faceValue};
+ return {method:l.method,share:l.share,days:l.due,principal:p,financedVAT,facilityPrincipal,rateBase,rate:l.rate,rateMode:l.costMode||'monthly',financeMarkup,feeBaseMode,feeBase,feeRate:l.fee,feeMode,fee,financedFee,faceValue,marginBase,marginRate:l.margin,marginAmount,cashAtInception:v-financedVAT+fee-financedFee+marginAmount,amountAtMaturity:faceValue};
 }
 function salesLeg(principal,l,vatRate,holding){
  const rateMode=l.markupMode||'flat',rateFactor=rateMode==='monthly'?l.due/30:rateMode==='annual'?l.due/365:1;
  const markup=principal*pct(l.markup)*rateFactor,net=principal+markup;
  if(net<0)throw Error('اضافه‌قیمت و دوره فروش باعث مبلغ منفی شده‌اند.');
  const feeMode=l.feeMode||'annual',feeBaseMode=l.feeBaseMode||'receivable',feeBase=(feeBaseMode==='principal'?principal:net)*(l.feeIncludesVat?1+pct(vatRate):1),feeFactor=timeFactor(feeMode,l.due),fee=feeBase*pct(l.fee)*feeFactor;
- return {method:l.method|| (l.due>0?'credit':'cash'),feeBaseMode,feeFactor,rateFactor,finalReceivable:net+(l.feeDirection==='paid'?0:fee),principal,markup,net,rateMode,rate:l.markup||0,days:l.due,share:l.share,feeBase,feeRate:l.fee||0,feeMode,feeIncludesVat:!!l.feeIncludesVat,fee,feeDirection:l.feeDirection||'received',feeDay:holding+(l.feeTiming==='delivery'?0:l.due),day:holding+l.due};
+ const effectiveMarkupPct=principal?markup/principal*100:0,priceFactor=principal?net/principal:1;
+ return {method:l.method|| (l.due>0?'credit':'cash'),feeBaseMode,feeFactor,rateFactor,effectiveMarkupPct,priceFactor,finalReceivable:net+(l.feeDirection==='paid'?0:fee),principal,markup,net,rateMode,rate:l.markup||0,days:l.due,share:l.share,feeBase,feeRate:l.fee||0,feeMode,feeIncludesVat:!!l.feeIncludesVat,fee,feeDirection:l.feeDirection||'received',feeDay:holding+(l.feeTiming==='delivery'?0:l.due),day:holding+l.due};
 }
 function dailyProfile(events,start,mode='daily'){
  const map=new Map();events.filter(e=>e.affects).forEach(e=>{let row=map.get(e.day);if(!row){row={day:e.day,cash:0,inflow:0,outflow:0,labels:[]};map.set(e.day,row)}row.cash+=e.cash;row.inflow+=Math.max(0,e.cash);row.outflow+=Math.min(0,e.cash);row.labels.push(e.label)});
@@ -122,7 +123,7 @@ function simulate(input){
  const dealDuration=prof.lastDay-d.startDay,capitalDays=prof.cap,averageCapital=dealDuration>0?capitalDays/dealDuration:null,returnOnAverageCapital=averageCapital>tol?nominal/averageCapital:null;
  const xr=calculateXirr(prof.daily);
  salesFinanceLegs.forEach((l,i)=>{const rs=receipts.filter(x=>x.source==='sales_'+i+'_net'||x.source==='sales_'+i+'_fee');l.vat=sum(rs.map(x=>x.vat));l.ecl=sum(rs.map(x=>x.loss));l.vatLoss=sum(rs.map(x=>x.vatLoss));l.netCollection=sum(rs.map(x=>x.base-x.loss+x.vat-x.vatLoss));l.presentValue=sum(events.filter(e=>e.auditRef&&rs.some(x=>e.auditRef.replace(/^-/,'').startsWith('receipt_'+receipts.indexOf(x)+'_'))).map(e=>e.cash/Math.pow(1+pct(d.hurdle),e.day/365)))-(l.feeDirection==='paid'?l.fee/Math.pow(1+pct(d.hurdle), (l.feeDay+d.startDay)/365):0);});
- return {...prof,fundingMode:d.fundingMode,insuranceBase,vatRecoveryDay:d.vatRecoveryDay,dealDuration,capitalDays,averageCapital,returnOnAverageCapital,xirr:xr.value,xirrStatus:xr.status,salesFinanceLegs,salesFeeIncome,salesFeeCost,receipts,accountingAdjustments,npv,nominal,gross:saleNetTotal-purchaseBase,op,finCost,saleNetTotal,purchaseBase,profitMargin:economics.profitMargin,periodReturn,periodDays,monthlyEquivalent,annualEquivalent,expectedPeriodReturn,periodExcess:periodReturn==null||expectedPeriodReturn==null?null:periodReturn-expectedPeriodReturn,annualReturn:annualEquivalent,cashReturn,recoveryDay:prof.recovery,firstFundingDay:prof.firstNeg,lastCashDay:prof.lastDay,weightedTenor:financedPrincipal?sum(financeLegs.map(l=>l.facilityPrincipal*l.days))/financedPrincipal:0,finCostPct:financedPrincipal?(finCost-salesFeeCost)/financedPrincipal*100:0,events,usage,cashOK,facilityOK,feasible,saleable,expectedLoss,badDebtVatLoss,inputVat,outputVat,vatPayable:payable,vatCredit:totalCredit,vatWriteOff,financeLegs,operations,economics,warnings,schemaVersion:11};
+ return {...prof,fundingMode:d.fundingMode,insuranceBase,vatRecoveryDay:d.vatRecoveryDay,dealDuration,capitalDays,averageCapital,returnOnAverageCapital,xirr:xr.value,xirrStatus:xr.status,salesFinanceLegs,salesFeeIncome,salesFeeCost,receipts,accountingAdjustments,npv,nominal,gross:saleNetTotal-purchaseBase,op,finCost,saleNetTotal,purchaseBase,profitMargin:economics.profitMargin,periodReturn,periodDays,monthlyEquivalent,annualEquivalent,expectedPeriodReturn,periodExcess:periodReturn==null||expectedPeriodReturn==null?null:periodReturn-expectedPeriodReturn,annualReturn:annualEquivalent,cashReturn,recoveryDay:prof.recovery,firstFundingDay:prof.firstNeg,lastCashDay:prof.lastDay,weightedTenor:financedPrincipal?sum(financeLegs.map(l=>l.facilityPrincipal*l.days))/financedPrincipal:0,finCostPct:financedPrincipal?(finCost-salesFeeCost)/financedPrincipal*100:0,events,usage,cashOK,facilityOK,feasible,saleable,expectedLoss,badDebtVatLoss,inputVat,outputVat,vatPayable:payable,vatCredit:totalCredit,vatWriteOff,financeLegs,operations,economics,warnings,schemaVersion:12};
 }
 function solveBoundary(input,variable,kind){
  const d=normalize(input),limitKeys=kind==='cash'?['cash']:kind==='facility'?['cheque','lc','boe']:['cash','cheque','lc','boe'];
