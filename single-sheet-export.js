@@ -142,10 +142,21 @@ function model(d,r){
  n('capitalDays','سرمایه × روز',r.capitalDays,'SUM(J'+dailyStart+':J'+dailyEnd+')','تومان × روز');
  n('averageCapital','میانگین سرمایه درگیر',r.averageCapital,'IF(@dealDuration@>0,@capitalDays@/MAX(@dealDuration@,1E-100),"قابل تعیین نیست")');
  n('returnOnAverageCapital','بازده بر میانگین سرمایه درگیر',r.returnOnAverageCapital,'IF(ISNUMBER(@averageCapital@),IF(@averageCapital@>0,@profit@/MAX(@averageCapital@,1E-100),"قابل تعیین نیست"),"قابل تعیین نیست")','نسبت');
- n('periodReturn','بازده بر اوج سرمایه درگیر',r.periodReturn,'IF(COUNT(I'+dailyStart+':I'+dailyEnd+')=0,"قابل تعیین نیست",IF(@peak@>'+Math.max(1e-6,(r.saleNetTotal+r.purchaseBase+r.op+r.finCost)*1e-10)+',@profit@/MAX(@peak@,1E-100),"قابل تعیین نیست"))','نسبت');
- n('monthly','معادل ماهانه',r.monthlyEquivalent,'IF(ISNUMBER(@periodReturn@),IF(@duration@>0,IFERROR((1+@periodReturn@)^(30/@duration@)-1,"قابل تعیین نیست"),"قابل تعیین نیست"),"قابل تعیین نیست")','نسبت');
- n('annual','معادل سالانه',r.annualEquivalent,'IF(ISNUMBER(@periodReturn@),IF(@duration@>0,IFERROR((1+@periodReturn@)^(365/@duration@)-1,"قابل تعیین نیست"),"قابل تعیین نیست"),"قابل تعیین نیست")','نسبت');
- n('expectedPeriod','حداقل بازده مورد انتظار دوره',r.expectedPeriodReturn,'IF(@duration@>0,(1+@hurdle@)^(@duration@/365)-1,"قابل تعیین نیست")','نسبت');
+ n('capitalEfficiency','سود نسبت به اوج نقدینگی',r.cashReturn,'IF(@peak@>'+Math.max(1e-6,(r.saleNetTotal+r.purchaseBase+r.op+r.finCost)*1e-10)+',@profit@/MAX(@peak@,1E-100),"قابل تعیین نیست")','نسبت');
+ note('بازده زمانی از جریان‌های نقدی تاریخ‌دار محاسبه می‌شود. فقط الگوی خروج سپس ورود با یک تغییر علامت، بازده یکتا دارد. سود نسبت به اوج نقدینگی یک شاخص جداگانه است. حاشیه سود = سود ÷ درآمد فروش.');
+ rows.push(['روز','شرح','جریان نقدی','تاریخ اکسل','علامت جریان','آخرین علامت','تغییر علامت','اولین روز فعال','آخرین روز فعال'].map(v=>({v,s:6})));
+ const returnStart=rows.length+1;let previousSign=0,firstActive=null,lastActive=null;
+ daily.forEach((x,i)=>{const row=rows.length+1,source=dailyStart+i,sg=Math.abs(x.cash)>1e-8?Math.sign(x.cash):0,change=sg&&previousSign&&sg!==previousSign?1:0;if(sg){if(firstActive===null)firstActive=x.day;lastActive=x.day;previousSign=sg;}
+ rows.push([{v:x.day,f:'A'+source},{v:'جریان بازده روز '+fa(x.day)},{v:x.cash,f:'C'+source,s:4},{v:46023+x.day,f:'DATE(2026,1,1)+A'+row},{v:sg,f:'IF(ABS(C'+row+')>1E-8,SIGN(C'+row+'),0)'},{v:previousSign,f:'IF(E'+row+'=0,'+(i?'F'+(row-1):'0')+',E'+row+')'},{v:change,f:i?'IF(E'+row+'=0,0,IF(F'+(row-1)+'=0,0,IF(E'+row+'=F'+(row-1)+',0,1)))':'0'},{v:firstActive===null?'':firstActive,f:i?'IF(ISNUMBER(H'+(row-1)+'),H'+(row-1)+',IF(E'+row+'=0,"",A'+row+'))':'IF(E'+row+'=0,"",A'+row+')'},{v:lastActive===null?'':lastActive,f:'IF(E'+row+'=0,'+(i?'I'+(row-1):'""')+',A'+row+')'}]);});
+ const returnEnd=rows.length,active=daily.filter(x=>Math.abs(x.cash)>1e-8),firstSign=active.length?Math.sign(active[0].cash):0;
+ n('returnFirstSign','علامت اولین جریان فعال',firstSign,'IF(COUNT(H'+returnStart+':H'+returnEnd+')=0,0,INDEX(E'+returnStart+':E'+returnEnd+',MATCH(H'+returnEnd+',A'+returnStart+':A'+returnEnd+',0)))','علامت');
+ n('returnSignChanges','تعداد تغییر علامت جریان نقدی',daily.reduce((o,x)=>{const sg=Math.abs(x.cash)>1e-8?Math.sign(x.cash):0;if(sg){if(o.prev&&sg!==o.prev)o.count++;o.prev=sg;}return o;},{prev:0,count:0}).count,'SUM(G'+returnStart+':G'+returnEnd+')','تعداد');
+ n('periodDays','دوره کامل بازده',r.periodDays,'IF(ISNUMBER(H'+returnEnd+'),I'+returnEnd+'-H'+returnEnd+',0)','روز');
+ n('xirr','بازده داخلی سالانه جریان نقدی',r.xirr,'IF(AND(@returnFirstSign@=-1,@returnSignChanges@=1,@periodDays@>0),IFERROR(XIRR(C'+returnStart+':C'+returnEnd+',D'+returnStart+':D'+returnEnd+','+(r.xirr!=null?r.xirr:0.1)+'),"قابل تعیین نیست"),"قابل تعیین نیست")','نسبت','با یک تغییر علامت خروج به ورود. روزهای بدون جریان در مدت بازده لحاظ نمی‌شوند.');
+ n('periodReturn','بازده دوره معامله',r.periodReturn,'IF(ISNUMBER(@xirr@),IFERROR((1+@xirr@)^(@periodDays@/365)-1,"قابل تعیین نیست"),"قابل تعیین نیست")','نسبت');
+ n('monthly','معادل ماهانه',r.monthlyEquivalent,'IF(ISNUMBER(@xirr@),IFERROR((1+@xirr@)^(30/365)-1,"قابل تعیین نیست"),"قابل تعیین نیست")','نسبت');
+ n('annual','معادل سالانه',r.annualEquivalent,'@xirr@','نسبت');
+ n('expectedPeriod','حداقل بازده مورد انتظار دوره',r.expectedPeriodReturn,'IF(@periodDays@>0,(1+@hurdle@)^(@periodDays@/365)-1,"قابل تعیین نیست")','نسبت');
  section('I · کنترل تصمیم؛ اقتصاد و قابلیت اجرا مستقل');
  n('economicStatus','جذابیت اقتصادی',r.npv>0?'مناسب':r.npv<0?'نامناسب':'مرزی','IF(@npv@>0,"مناسب",IF(@npv@<0,"نامناسب","مرزی"))','');
  ['cash','cheque','lc','boe'].forEach(k=>n('gap_'+k,'کسری ظرفیت '+k,Math.max(0,(k==='cash'?r.peak:r.usage[k])-(d.limits[k]==null?Infinity:d.limits[k])),'IF(ISNUMBER('+f('limit_'+k)+'),MAX(0,'+f('usage_'+k)+'-'+f('limit_'+k)+'),0)'));

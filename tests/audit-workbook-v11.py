@@ -62,6 +62,18 @@ def evaluate(s,f):
         if name=='MIN':return min(nums) if nums else 0
         if name=='COUNT':return len(nums)
         if name=='ABS':return abs(args[0])
+        if name=='SIGN':return 1 if args[0]>0 else -1 if args[0]<0 else 0
+        if name=='AND':return all(args)
+        if name=='DATE':
+            from datetime import date
+            return (date(*map(int,args))-date(1899,12,30)).days
+        if name=='XIRR':
+            # Independently solve discounted dated cash flow with scipy's Brent method.
+            from scipy.optimize import brentq
+            amounts,dates=args[:2];origin=min(dates);scale=max(map(abs,amounts))
+            def value(x):
+                return sum((a/scale)*math.exp(max(-700,min(700,-x*(d-origin)/365))) for a,d in zip(amounts,dates))
+            return math.expm1(brentq(value,-13.81551056,13.81551056,xtol=1e-13))
         if name=='COUNTIF':return sum(x==args[1] for x in args[0])
         if name=='SUMIF':return sum(b for a,b in zip(args[0],args[2]) if a==args[1])
         if name=='MATCH':return args[1].index(args[0])+1

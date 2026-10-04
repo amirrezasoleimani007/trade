@@ -112,16 +112,21 @@ function simulate(input){
  events.sort((a,b)=>a.day-b.day||a.seq-b.seq);const prof=dailyProfile(events,d.startDay,d.fundingMode),npv=sum(events.map(e=>e.econ/Math.pow(1+pct(d.hurdle),e.day/365))),tol=Math.max(1e-6,(saleNetTotal+purchaseBase+op+finCost)*1e-10),difference=sum(events.map(e=>e.econ))-nominal;
  if(Math.abs(difference)>tol)throw Error('عدم تطبیق موتور اقتصاد و جریان نقدی.');
  const cashOK=d.limits.cash==null||prof.peak<=d.limits.cash+tol,facilityOK=Object.keys(usage).every(k=>d.limits[k]==null||usage[k]<=d.limits[k]+tol),feasible=cashOK&&facilityOK;
- const cashReturn=prof.peak>tol?nominal/prof.peak:null,periodReturn=prof.recovery!==null&&prof.ending>=0?cashReturn:null,periodDays=prof.duration;
+ // Cash efficiency is not a time-weighted investment return. Use the unique
+ // conventional cash-flow IRR, compounded over the full dated cash-flow period.
+ // A loss has a negative return; nonconventional cash flows have no unique KPI.
+ const cashReturn=prof.peak>tol?nominal/prof.peak:null,xr=calculateXirr(prof.daily);
+ const activeDays=prof.daily.filter(x=>Math.abs(x.cash)>1e-8),periodDays=activeDays.length>1?activeDays.at(-1).day-activeDays[0].day:0;
+ const pv=xr.value!=null&&periodDays>0?Math.expm1(Math.log1p(xr.value)*periodDays/365):null;
+ const periodReturn=Number.isFinite(pv)?pv:null;
  const equivalent=days=>{const v=periodReturn!=null&&periodReturn>-1&&periodDays>0?Math.expm1(Math.log1p(periodReturn)*days/periodDays):null;return Number.isFinite(v)?v:null;};
  const monthlyEquivalent=equivalent(30),annualEquivalent=equivalent(365),expectedPeriodReturn=periodDays>0?Math.expm1(Math.log1p(pct(d.hurdle))*periodDays/365):null;
- if(prof.firstNeg!==null&&(prof.recovery===null||prof.ending<0))warnings.push('سرمایه تا پایان افق مدل به‌طور کامل بازیافت نشده است؛ بازده دوره قابل ارائه نیست.');
+ if(periodReturn===null)warnings.push('بازده زمانی یکتا برای این الگوی پرداخت و وصول قابل محاسبه نیست؛ تصمیم اقتصادی بر اساس NPV و سود بررسی شود.');
  const accountingAdjustments=[];if(vatWriteOff)accountingAdjustments.push({label:'VAT غیرقابل بازیافت',amount:-vatWriteOff});if(d.badDebtVatTreatment!=='recoverable'&&badDebtVatLoss)accountingAdjustments.push({label:'VAT مطالبات سوخت‌شده',amount:-badDebtVatLoss});
  if(Math.abs(sum(events.map(e=>e.economicAmount))+sum(accountingAdjustments.map(a=>a.amount))-nominal)>tol)throw Error('عدم تطبیق دفتر اثر اقتصادی.');
  const financedPrincipal=sum(financeLegs.map(l=>l.facilityPrincipal));
  const economics={revenue:saleNetTotal,purchase:purchaseBase,operations:op,financing:finCost,risk,other:vatWriteOff,profit:nominal,npv,timeValueEffect:npv-nominal,profitMargin:saleNetTotal>0?nominal/saleNetTotal:null,totalCosts:purchaseBase+op+finCost+risk+vatWriteOff,reconciliationDifference:difference,tolerance:tol};
  const dealDuration=prof.lastDay-d.startDay,capitalDays=prof.cap,averageCapital=dealDuration>0?capitalDays/dealDuration:null,returnOnAverageCapital=averageCapital>tol?nominal/averageCapital:null;
- const xr=calculateXirr(prof.daily);
  salesFinanceLegs.forEach((l,i)=>{const rs=receipts.filter(x=>x.source==='sales_'+i+'_net'||x.source==='sales_'+i+'_fee');l.vat=sum(rs.map(x=>x.vat));l.ecl=sum(rs.map(x=>x.loss));l.vatLoss=sum(rs.map(x=>x.vatLoss));l.netCollection=sum(rs.map(x=>x.base-x.loss+x.vat-x.vatLoss));l.presentValue=sum(events.filter(e=>e.auditRef&&rs.some(x=>e.auditRef.replace(/^-/,'').startsWith('receipt_'+receipts.indexOf(x)+'_'))).map(e=>e.cash/Math.pow(1+pct(d.hurdle),e.day/365)))-(l.feeDirection==='paid'?l.fee/Math.pow(1+pct(d.hurdle), (l.feeDay+d.startDay)/365):0);});
  return {...prof,fundingMode:d.fundingMode,insuranceBase,vatRecoveryDay:d.vatRecoveryDay,dealDuration,capitalDays,averageCapital,returnOnAverageCapital,xirr:xr.value,xirrStatus:xr.status,salesFinanceLegs,salesFeeIncome,salesFeeCost,receipts,accountingAdjustments,npv,nominal,gross:saleNetTotal-purchaseBase,op,finCost,saleNetTotal,purchaseBase,profitMargin:economics.profitMargin,periodReturn,periodDays,monthlyEquivalent,annualEquivalent,expectedPeriodReturn,periodExcess:periodReturn==null||expectedPeriodReturn==null?null:periodReturn-expectedPeriodReturn,annualReturn:annualEquivalent,cashReturn,recoveryDay:prof.recovery,firstFundingDay:prof.firstNeg,lastCashDay:prof.lastDay,weightedTenor:financedPrincipal?sum(financeLegs.map(l=>l.facilityPrincipal*l.days))/financedPrincipal:0,finCostPct:financedPrincipal?(finCost-salesFeeCost)/financedPrincipal*100:0,events,usage,cashOK,facilityOK,feasible,saleable,expectedLoss,badDebtVatLoss,inputVat,outputVat,vatPayable:payable,vatCredit:totalCredit,vatWriteOff,financeLegs,operations,economics,warnings,schemaVersion:12};
 }
