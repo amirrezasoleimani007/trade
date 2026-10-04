@@ -9,6 +9,7 @@
 .input,.select{min-height:52px;font-size:17px}.select{height:auto;white-space:normal;padding-block:12px}
 .summary-v,.k-value{overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
 .decision-kpi{min-width:0}.return-margin{display:flex;justify-content:space-between;gap:16px;align-items:center;margin:14px 0;padding-top:12px;border-top:1px solid #d9e4eb;font-size:15px}.return-margin strong{font-size:21px}
+.decision-kpi .k-label{font-size:15px}.decision-kpi .k-meta{font-size:14px;line-height:1.8}.decision-kpi .k-secondary{font-size:14px}.decision-dimension span{font-size:14px}.card-sub,.mini-sub{font-size:14px;line-height:1.9}
 .return-method{font-size:14px;line-height:1.9}.return-method p{margin:10px 0}.info-tip:focus{outline:2px solid #0f8b83}
 .price-range{min-width:0}.range-title{font-size:19px}.negotiation-action{font-size:17px;line-height:1.9;font-weight:600;color:#193f56;min-height:64px}
 .negotiation-scale{height:20px;border-radius:7px;position:relative;margin:32px 8px 18px}
