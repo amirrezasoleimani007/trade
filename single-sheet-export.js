@@ -15,7 +15,7 @@ function model(d,r){
  }
  const f=k=>'@'+k+'@';const sumKeys=keys=>keys.length?keys.map(f).join('+'):'0';
  const rate=(key,label,value)=>n(key,label,(value||0)/100,null,'نسبت (۱ = ۱۰۰٪)');
- section('گروه سرمایه‌گذاری آتیه فولاد نقش جهان · ممیزی معامله · نسخه ۱۲');
+ section('گروه سرمایه‌گذاری آتیه فولاد نقش جهان · ممیزی معامله · نسخه ۱۳');
  note('همه جزئیات در همین شیت است. ستون C ورودی یا فرمول؛ ستون E متن همان فرمول؛ ستون‌های F تا J توضیح مبنا. مبالغ تومان و مقدار کالا تن است.');
  note('این فایل، ممیزی رویدادمحور معامله محاسبه‌شده است. برای تغییر نوع ابزار، تعداد اقساط، تاریخ‌ها، صفر به غیرصفر شدن یک رویداد یا فرض VAT، دوباره از نرم‌افزار خروجی بگیرید.');
  note('ورودی‌های آبی از قرارداد؛ سلول‌های محاسباتی فرمول‌دار. ستون «خروجی موتور» در کنترل نهایی، مرجع ثابت لحظه خروجی است؛ پس از ویرایش ورودی‌ها اختلاف با آن طبیعی است.');
@@ -57,9 +57,9 @@ function model(d,r){
   n(k+'inception',title+'پرداخت هنگام افتتاح',l.cashAtInception,f(k+'cashVAT')+'+'+f(k+'fee')+'-'+f(k+'financedFee')+'+'+f(k+'margin'));
  });
  const hasSalesFees=r.salesFinanceLegs.some(l=>Math.abs(l.fee||0)>1e-12);
- n('financing','کل هزینه مالی خرید',r.finCost,sumKeys(r.financeLegs.flatMap((l,i)=>['finance_'+i+'_markup','finance_'+i+'_fee']))+(hasSalesFees?'+@salesFeeCost@':''));
+ n('financing','کل هزینه تأمین مالی و کارمزد پرداختی',r.finCost,sumKeys(r.financeLegs.flatMap((l,i)=>['finance_'+i+'_markup','finance_'+i+'_fee']))+(hasSalesFees?'+@salesFeeCost@':''));
  section('C · شرایط فروش؛ قیمت اعتباری و زمان وصول هر بخش');
- note('افزایش قیمت اعتباری مستقیماً به اصل فروش هر بخش اضافه می‌شود. کارمزد جداگانه فروش در نسخه ۱۲ از رابط کاربری حذف شده تا با افزایش قیمت دوباره‌شماری نشود؛ فقط سناریوهای قدیمی دارای کارمزد برای سازگاری قابل ممیزی‌اند.');
+ note('افزایش قیمت اعتباری مستقیماً به اصل فروش هر بخش اضافه می‌شود. کارمزد جداگانه فروش در نسخه ۱۳ از رابط کاربری حذف شده تا با افزایش قیمت دوباره‌شماری نشود؛ فقط سناریوهای قدیمی دارای کارمزد برای سازگاری قابل ممیزی‌اند.');
  r.salesFinanceLegs.forEach((l,i)=>{const k='sales_'+i+'_',title='بخش '+fa(i+1)+' فروش · ';const input=d.salesLegs[i];
   rate(k+'share',title+'سهم',l.share);n(k+'days',title+'مدت اعتبار',l.days,null,'روز');rate(k+'rate',title+'نرخ افزایش قیمت',l.rate);
   n(k+'mode',title+'مبنای افزایش قیمت',{flat:'ثابت',monthly:'ماهانه',annual:'سالانه'}[l.rateMode],null,'');
@@ -72,8 +72,8 @@ function model(d,r){
    n(k+'feeFactor',title+'ضریب دوره کارمزد قدیمی',l.feeMode==='flat'?1:l.days/(l.feeMode==='monthly'?30:365),l.feeMode==='flat'?'1':f(k+'days')+'/'+(l.feeMode==='monthly'?30:365),'ضریب');
    n(k+'fee',title+'مبلغ کارمزد قدیمی',l.fee,f(k+'feeBase')+'*'+f(k+'feeRate')+'*'+f(k+'feeFactor'));}
  });
- if(hasSalesFees)n('salesFeeIncome','جمع کارمزد فروش قدیمی دریافتی',r.salesFeeIncome,sumKeys(r.salesFinanceLegs.flatMap((l,i)=>l.feeDirection==='received'&&Math.abs(l.fee||0)>1e-12?['sales_'+i+'_fee']:[])));
- if(hasSalesFees)n('salesFeeCost','جمع کارمزد فروش قدیمی پرداختی',r.salesFeeCost,sumKeys(r.salesFinanceLegs.flatMap((l,i)=>l.feeDirection==='paid'&&Math.abs(l.fee||0)>1e-12?['sales_'+i+'_fee']:[])));
+ if(hasSalesFees)n('salesFeeIncome','جمع کارمزد فروش دریافتی',r.salesFeeIncome,sumKeys(r.salesFinanceLegs.flatMap((l,i)=>l.feeDirection==='received'&&Math.abs(l.fee||0)>1e-12?['sales_'+i+'_fee']:[])));
+ if(hasSalesFees)n('salesFeeCost','جمع کارمزد فروش پرداختی',r.salesFeeCost,sumKeys(r.salesFinanceLegs.flatMap((l,i)=>l.feeDirection==='paid'&&Math.abs(l.fee||0)>1e-12?['sales_'+i+'_fee']:[])));
  n('revenue','کل درآمد فروش',r.saleNetTotal,sumKeys(r.salesFinanceLegs.map((l,i)=>'sales_'+i+'_net'))+'+@preBase@'+(hasSalesFees?'+@salesFeeIncome@':''));
  section('D · هزینه‌های عملیاتی، خارجی و سفارشی');
  const freight=d.qTon*d.intFreight*d.buyFx,ins=d.importFreightIncluded?0:(r.purchaseBase+freight)*d.insurancePct/100,border=d.importFreightIncluded?r.purchaseBase:r.purchaseBase+freight+ins;

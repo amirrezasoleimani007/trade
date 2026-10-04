@@ -57,10 +57,15 @@ function dailyProfile(events,start,mode='daily'){
  // Recovery is final: a later deficit resets the recovery day.
  return {daily,peak,peakDay,cap,initial,firstNeg,recovery,ending:bal,lastDay,duration:firstNeg===null?0:(recovery===null?lastDay:recovery)-firstNeg};
 }
+function contractBasis(input){
+ const d=input,pct=x=>Number(x||0)/100;
+ const saleable=Number(d.qTon||0)*(1-pct(d.shrink)),purchaseBase=Number(d.qTon||0)*Number(d.buyTon||0)/(d.purchasePriceIncludesVat&&d.tradeType!=='import'?1+pct(d.purchaseVat):1),saleBase=saleable*Number(d.sellTon||0)/(d.salePriceIncludesVat?1+pct(d.saleVat):1);
+ return {saleable,purchaseBase,saleBase,purchaseRemaining:purchaseBase*(1-pct(d.advance)),saleRemaining:saleBase*(1-pct(d.salePrepayPct))};
+}
 function simulate(input){
  const d=normalize(input),events=[],operations=[],financeLegs=[],vatInputs=[];let inputVat=0,op=0,finCost=0,expectedLoss=0,badDebtVatLoss=0;
  function event(day,cash,cat,label,component,auditRef){if(!cash)return;if(!Number.isFinite(cash)||day<0||!Number.isFinite(day))throw Error('جریان نقدی خارج از دامنه معتبر است.');events.push({auditRef,day:day+d.startDay,seq:events.length,cash,econ:cash,cat,label,principal:0,affects:true,affectsCashFlow:true,affectsEconomicProfit:!['vat','margin'].includes(cat),affectsVAT:cat==='vat',affectsFacility:cat==='purchase',nominalAmount:cash,cashAmount:cash,economicAmount:component==null?cash:component,vatComponent:cat==='vat'?cash:0,financingComponent:cat==='fin_cost'?cash:0});}
- const saleable=d.qTon*(1-pct(d.shrink)),purchaseBase=d.qTon*d.buyTon/(d.purchasePriceIncludesVat&&d.tradeType!=='import'?1+pct(d.purchaseVat):1),saleBase=saleable*d.sellTon/(d.salePriceIncludesVat?1+pct(d.saleVat):1);
+ const {saleable,purchaseBase,saleBase}=contractBasis(d);
  const preBase=saleBase*pct(d.salePrepayPct),remaining=saleBase-preBase,salesFinanceLegs=d.salesLegs.map(l=>salesLeg(remaining*pct(l.share),l,d.saleVat,d.holding)),receipts=[];
  salesFinanceLegs.forEach((l,i)=>{receipts.push({day:l.day,base:l.net,credit:l.days>0,source:'sales_'+i+'_net'});if(l.feeDirection==='received'&&l.fee)receipts.push({day:l.feeDay,base:l.fee,credit:l.feeDay>d.holding,source:'sales_'+i+'_fee',label:'کارمزد دریافتی فروش'});});
  const salesFeeIncome=sum(salesFinanceLegs.filter(l=>l.feeDirection==='received').map(l=>l.fee)),salesFeeCost=sum(salesFinanceLegs.filter(l=>l.feeDirection==='paid').map(l=>l.fee));
@@ -158,14 +163,30 @@ function calculateXirr(daily){
 }
 function decision(input,r,bounds={}){
  const d=normalize(input),ceiling=bounds.econ,target=Number.isFinite(ceiling)?ceiling*(1-pct(d.safety)):null;
- const economics=r.npv<0?'نامناسب':r.npv===0?'مرزی':'مناسب',execution=r.feasible?'قابل اجرا':'نیازمند تأمین مالی';
- let action=r.npv<0?'عدم انجام معامله':!r.feasible?'اصلاح ساختار تأمین مالی':r.npv===0?'مذاکره روی قیمت':target!=null&&d.buyTon>target?'مذاکره روی قیمت خرید':r.periodReturn!=null&&r.expectedPeriodReturn!=null&&r.periodReturn<r.expectedPeriodReturn?'مذاکره روی قیمت خرید':d.expectedCreditLoss>8?'اصلاح دوره وصول':'انجام معامله';
- const secondary=[];if(d.expectedCreditLoss>8)secondary.push('کاهش ریسک وصول');if(target!=null&&d.buyTon>target)secondary.push('مذاکره برای تأمین حاشیه امن قیمت');
- const cashGap=d.limits.cash==null?0:Math.max(0,r.peak-d.limits.cash),facilityGaps=Object.keys(r.usage).filter(k=>d.limits[k]!=null&&r.usage[k]>d.limits[k]).map(k=>({method:k,amount:r.usage[k]-d.limits[k]}));
- let note=r.npv<0?'ارزش فعلی خالص منفی است؛ انجام معامله با شرایط فعلی توصیه نمی‌شود.':!r.feasible?'اقتصاد معامله مثبت است، اما نقدینگی یا ظرفیت ابزار اعتباری کافی نیست؛ تأمین منابع پیش از معامله اولویت دارد.':action==='انجام معامله'?'اقتصاد معامله مثبت و محدودیت‌های تعریف‌شده تأمین شده‌اند.':'اقتصاد معامله غیرمنفی است؛ شرایط قیمت یا وصول برای کیفیت مطلوب نیازمند اصلاح است.';
- if(r.npv>=0&&!r.feasible){const nf=new Intl.NumberFormat('fa-IR',{maximumFractionDigits:0}),parts=[];if(cashGap>0)parts.push(nf.format(cashGap)+' تومان نقدینگی');facilityGaps.forEach(x=>parts.push(nf.format(x.amount)+' تومان ظرفیت '+({cheque:'چک',lc:'اعتبار اسنادی',boe:'برات'}[x.method]||x.method)));note+=' کسری قابل رفع: '+parts.join(' و ')+'.';}
- return {economic:{label:economics,status:r.npv<0?'bad':r.npv===0?'warn':'good'},execution,action,secondary,note,cashGap,facilityGaps,target,economicCeiling:ceiling,executionNote:r.feasible?'':'اجرای معامله مشروط به رفع کسری منابع است.'};
+ const used={cash:r.peak,...r.usage},names={cash:'نقدینگی',cheque:'چک',lc:'اعتبار اسنادی',boe:'برات'};
+ const unknown=Object.keys(used).filter(k=>used[k]>1e-6&&d.limits[k]==null);
+ const cashGap=d.limits.cash==null?0:Math.max(0,r.peak-d.limits.cash),facilityGaps=Object.keys(r.usage).filter(k=>d.limits[k]!=null&&r.usage[k]>d.limits[k]+1e-6).map(k=>({method:k,amount:r.usage[k]-d.limits[k]}));
+ const tolerance=Math.max(1e-6,r.economics.tolerance),negative=r.npv < -tolerance,border=Math.abs(r.npv)<=tolerance;
+ const weakReturn=r.periodReturn!=null&&r.expectedPeriodReturn!=null&&r.periodReturn<r.expectedPeriodReturn-1e-9;
+ const economics=negative?'نامناسب':border||weakReturn?'مرزی':'مناسب',execution=!r.feasible?'نیازمند تأمین مالی':unknown.length?'نیازمند تأیید منابع':'قابل اجرا';
+ let action=negative?'عدم انجام معامله':!r.feasible?'اصلاح ساختار تأمین مالی':border||weakReturn||target!=null&&d.buyTon>target?'مذاکره روی قیمت خرید':d.expectedCreditLoss>8?'اصلاح دوره وصول':unknown.length?'تأیید ظرفیت منابع':'انجام معامله';
+ const secondary=[];if(d.expectedCreditLoss>8)secondary.push('کاهش ریسک وصول');if(unknown.length)secondary.push('ثبت سقف '+unknown.map(k=>names[k]).join(' و '));
+ const nf=new Intl.NumberFormat('fa-IR',{maximumFractionDigits:0}),gaps=[];
+ if(cashGap>1e-6)gaps.push(nf.format(cashGap)+' تومان نقدینگی');facilityGaps.forEach(x=>gaps.push(nf.format(x.amount)+' تومان ظرفیت '+names[x.method]));
+ let note=negative?'ارزش فعلی خالص منفی است؛ با شرایط فعلی معامله ارزش اقتصادی ایجاد نمی‌کند.':!r.feasible?'اقتصاد معامله '+economics+' است؛ برای اجرا '+gaps.join(' و ')+' منابع اضافه لازم است.':unknown.length?'اقتصاد معامله '+economics+' است؛ قابلیت اجرا تا ثبت سقف '+unknown.map(k=>names[k]).join(' و ')+' تأیید نشده است.':action==='انجام معامله'?'اقتصاد معامله مناسب است و ظرفیت منابع ثبت‌شده نیاز معامله را پوشش می‌دهد.':weakReturn?'بازده دوره کمتر از حداقل انتظار همین دوره است؛ قیمت خرید یا زمان وصول را اصلاح کنید.':'حاشیه امن قیمت به هدف ثبت‌شده نمی‌رسد؛ مذاکره روی قیمت خرید توصیه می‌شود.';
+ return {economic:{label:economics,status:negative?'bad':border||weakReturn?'warn':'good'},execution,action,secondary,note,cashGap,facilityGaps,unknownResources:unknown,executionConfirmed:r.feasible&&!unknown.length,target,economicCeiling:ceiling,executionNote:!r.feasible?'اجرای معامله مشروط به رفع کسری منابع است.':unknown.length?'سقف ثبت‌نشده، منبع نامحدود محسوب نمی‌شود.':''};
+}
+function proposals(input,r,bounds={}){
+ const d=normalize(input),out=[],safe=Number.isFinite(bounds.econ)?bounds.econ*(1-pct(d.safety)):null;
+ const buy=safe==null?null:Math.min(d.buyTon,safe,Number.isFinite(bounds.cash)?bounds.cash:Infinity,Number.isFinite(bounds.fac)?bounds.fac:Infinity);
+ function add(id,label,patch){try{const next=normalize({...d,...patch}),result=simulate(next);out.push({id,label,input:next,result,decision:decision(next,result,{econ:bounds.econ}),delta:{npv:result.npv-r.npv,profit:result.nominal-r.nominal,peak:result.peak-r.peak}})}catch(e){/* invalid alternatives are never offered */}}
+ if(buy>0&&buy<d.buyTon*(1-1e-10))add('buy','مذاکره روی خرید',{buyTon:buy});
+ const sell=Number.isFinite(bounds.minSell)&&d.safety<100?bounds.minSell/(1-pct(d.safety)):null;
+ if(sell>0&&sell>d.sellTon*(1+1e-10))add('sell','اصلاح قیمت فروش',{sellTon:sell});
+ const view=decision(d,r,bounds);if(view.cashGap>1e-6||view.facilityGaps.length){const limits={...d.limits};if(view.cashGap>1e-6)limits.cash=r.peak;view.facilityGaps.forEach(x=>limits[x.method]=r.usage[x.method]);add('resources','تأمین کسری منابع',{limits});}
+ if(!r.feasible&&Number.isFinite(bounds.maxQty)&&bounds.maxQty>0&&bounds.maxQty<d.qTon*(1-1e-10))add('volume','کاهش حجم معامله',{qTon:bounds.maxQty*.999999});
+ return out;
 }
 
-root.TradeEngine={simulate,normalize,financingLeg,salesLeg,dailyProfile,solveBoundary,decision,calculateXirr,timeFactor};
+root.TradeEngine={simulate,normalize,financingLeg,salesLeg,dailyProfile,solveBoundary,decision,calculateXirr,timeFactor,proposals,contractBasis};
 })(typeof window==='undefined'?globalThis:window);
