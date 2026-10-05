@@ -1,0 +1,62 @@
+{
+  "results": [
+    {
+      "name": "high-profit",
+      "profit": 3000000000,
+      "npv": 2655116751.6930733,
+      "margin": 0.5,
+      "finance": 0
+    },
+    {
+      "name": "low-profit",
+      "profit": 1000000,
+      "npv": -171499104.69484758,
+      "margin": 0.0003332222592469177,
+      "finance": 0
+    },
+    {
+      "name": "loss",
+      "profit": -300000000,
+      "npv": -455197461.73811674,
+      "margin": -0.1111111111111111,
+      "finance": 0
+    },
+    {
+      "name": "tiny-components",
+      "profit": 299999999.9999,
+      "npv": 110314213.43109035,
+      "margin": 0.0909090909090606,
+      "finance": 0
+    },
+    {
+      "name": "heavy-finance",
+      "profit": -1545000000,
+      "npv": -1392317081.9348297,
+      "margin": -0.4681818181818182,
+      "finance": 1845000000
+    }
+  ],
+  "accessibility": [
+    {
+      "name": "entry",
+      "violations": []
+    },
+    {
+      "name": "finance",
+      "violations": []
+    },
+    {
+      "name": "result",
+      "violations": []
+    },
+    {
+      "name": "mobile-result",
+      "violations": []
+    },
+    {
+      "name": "compare",
+      "violations": []
+    }
+  ],
+  "errors": []
+}
