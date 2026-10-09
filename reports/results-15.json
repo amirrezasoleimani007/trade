@@ -1,0 +1,185 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "name": "cash",
+      "profit": 300000000,
+      "npv": 110314213.43119049,
+      "margin": 0.09090909090909091,
+      "peak": 3000000000,
+      "milestones": {
+        "lastInflow": 72,
+        "lastPayment": 0,
+        "lastEvent": 72
+      }
+    },
+    {
+      "name": "credit reverse",
+      "profit": 300000000,
+      "npv": 324294653.82742786,
+      "margin": 0.09090909090909091,
+      "peak": 0,
+      "milestones": {
+        "lastInflow": 72,
+        "lastPayment": 90,
+        "lastEvent": 90
+      }
+    },
+    {
+      "name": "tiny upfront",
+      "profit": 299000000,
+      "npv": 323294653.82742786,
+      "margin": 0.0906060606060606,
+      "peak": 1000000,
+      "milestones": {
+        "lastInflow": 72,
+        "lastPayment": 90,
+        "lastEvent": 90
+      }
+    },
+    {
+      "name": "VAT late",
+      "profit": 300000000,
+      "npv": 69044379.64768189,
+      "margin": 0.09090909090909091,
+      "peak": 3300000000,
+      "milestones": {
+        "lastInflow": 180,
+        "lastPayment": 0,
+        "lastEvent": 180
+      }
+    },
+    {
+      "name": "high profit",
+      "profit": 3000000000,
+      "npv": 2655116751.6930733,
+      "margin": 0.5,
+      "peak": 3000000000,
+      "milestones": {
+        "lastInflow": 72,
+        "lastPayment": 0,
+        "lastEvent": 72
+      }
+    },
+    {
+      "name": "low profit",
+      "profit": 1000000,
+      "npv": -171499104.69484758,
+      "margin": 0.0003332222592469177,
+      "peak": 3000000000,
+      "milestones": {
+        "lastInflow": 72,
+        "lastPayment": 0,
+        "lastEvent": 72
+      }
+    },
+    {
+      "name": "loss",
+      "profit": -300000000,
+      "npv": -455197461.73811674,
+      "margin": -0.1111111111111111,
+      "peak": 3000000000,
+      "milestones": {
+        "lastInflow": 72,
+        "lastPayment": 0,
+        "lastEvent": 72
+      }
+    },
+    {
+      "name": "heavy finance",
+      "profit": -1517753424.6575344,
+      "npv": -1365070506.5923638,
+      "margin": -0.45992528019925283,
+      "peak": 1517753424.6575341,
+      "milestones": {
+        "lastInflow": 72,
+        "lastPayment": 90,
+        "lastEvent": 90
+      }
+    },
+    {
+      "name": "tiny costs",
+      "profit": 299999999.9999,
+      "npv": 110314213.43109035,
+      "margin": 0.0909090909090606,
+      "peak": 3000000000.0001,
+      "milestones": {
+        "lastInflow": 72,
+        "lastPayment": 0,
+        "lastEvent": 72
+      }
+    },
+    {
+      "name": "zero",
+      "profit": 0,
+      "npv": 0,
+      "margin": null,
+      "peak": 0,
+      "milestones": {
+        "lastInflow": null,
+        "lastPayment": null,
+        "lastEvent": null
+      }
+    },
+    {
+      "name": "null",
+      "profit": 0,
+      "npv": 0,
+      "margin": null,
+      "peak": 0,
+      "milestones": {
+        "lastInflow": null,
+        "lastPayment": null,
+        "lastEvent": null
+      }
+    },
+    {
+      "name": "large",
+      "profit": 30000000000000000,
+      "npv": 11031421343119040,
+      "margin": 0.09090909090909091,
+      "peak": 300000000000000000,
+      "milestones": {
+        "lastInflow": 72,
+        "lastPayment": 0,
+        "lastEvent": 72
+      }
+    },
+    {
+      "name": "long",
+      "profit": 300000000,
+      "npv": -2719922973.8245697,
+      "margin": 0.09090909090909091,
+      "peak": 3000000000,
+      "milestones": {
+        "lastInflow": 3000,
+        "lastPayment": 0,
+        "lastEvent": 3000
+      }
+    },
+    {
+      "name": "same day",
+      "profit": 300000000,
+      "npv": 300000000,
+      "margin": 0.09090909090909091,
+      "peak": 3000000000,
+      "milestones": {
+        "lastInflow": 0,
+        "lastPayment": 0,
+        "lastEvent": 0
+      }
+    },
+    {
+      "name": "mixed",
+      "profit": 300000000,
+      "npv": 34145292.11779976,
+      "margin": 0.09090909090909091,
+      "peak": 2010000000,
+      "milestones": {
+        "lastInflow": 192,
+        "lastPayment": 90,
+        "lastEvent": 192
+      }
+    }
+  ]
+}

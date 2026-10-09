@@ -126,7 +126,7 @@ function simulate(input){
  const periodReturn=Number.isFinite(pv)?pv:null;
  const equivalent=days=>{const v=periodReturn!=null&&periodReturn>-1&&periodDays>0?Math.expm1(Math.log1p(periodReturn)*days/periodDays):null;return Number.isFinite(v)?v:null;};
  const monthlyEquivalent=equivalent(30),annualEquivalent=equivalent(365),expectedPeriodReturn=periodDays>0?Math.expm1(Math.log1p(pct(d.hurdle))*periodDays/365):null;
- // Internal return remains a technical diagnostic, not an execution warning.
+ if(periodReturn===null)warnings.push('بازده زمانی یکتا برای این الگوی پرداخت و وصول قابل محاسبه نیست؛ تصمیم اقتصادی بر اساس NPV و سود بررسی شود.');
  const accountingAdjustments=[];if(vatWriteOff)accountingAdjustments.push({label:'VAT غیرقابل بازیافت',amount:-vatWriteOff});if(d.badDebtVatTreatment!=='recoverable'&&badDebtVatLoss)accountingAdjustments.push({label:'VAT مطالبات سوخت‌شده',amount:-badDebtVatLoss});
  if(Math.abs(sum(events.map(e=>e.economicAmount))+sum(accountingAdjustments.map(a=>a.amount))-nominal)>tol)throw Error('عدم تطبیق دفتر اثر اقتصادی.');
  const financedPrincipal=sum(financeLegs.map(l=>l.facilityPrincipal));
@@ -167,14 +167,14 @@ function decision(input,r,bounds={}){
  const unknown=Object.keys(used).filter(k=>used[k]>1e-6&&d.limits[k]==null);
  const cashGap=d.limits.cash==null?0:Math.max(0,r.peak-d.limits.cash),facilityGaps=Object.keys(r.usage).filter(k=>d.limits[k]!=null&&r.usage[k]>d.limits[k]+1e-6).map(k=>({method:k,amount:r.usage[k]-d.limits[k]}));
  const tolerance=Math.max(1e-6,r.economics.tolerance),negative=r.npv < -tolerance,border=Math.abs(r.npv)<=tolerance;
- // v15: economic verdict uses NPV; internal return is diagnostic only.
- const economics=negative?'نامناسب':border?'مرزی':'مناسب',execution=!r.feasible?'نیازمند تأمین مالی':unknown.length?'نیازمند تأیید منابع':'قابل اجرا';
- let action=negative?'عدم انجام معامله':!r.feasible?'اصلاح ساختار تأمین مالی':border||target!=null&&d.buyTon>target?'مذاکره روی قیمت خرید':d.expectedCreditLoss>8?'اصلاح دوره وصول':unknown.length?'تأیید ظرفیت منابع':'انجام معامله';
+ const weakReturn=r.periodReturn!=null&&r.expectedPeriodReturn!=null&&r.periodReturn<r.expectedPeriodReturn-1e-9;
+ const economics=negative?'نامناسب':border||weakReturn?'مرزی':'مناسب',execution=!r.feasible?'نیازمند تأمین مالی':unknown.length?'نیازمند تأیید منابع':'قابل اجرا';
+ let action=negative?'عدم انجام معامله':!r.feasible?'اصلاح ساختار تأمین مالی':border||weakReturn||target!=null&&d.buyTon>target?'مذاکره روی قیمت خرید':d.expectedCreditLoss>8?'اصلاح دوره وصول':unknown.length?'تأیید ظرفیت منابع':'انجام معامله';
  const secondary=[];if(d.expectedCreditLoss>8)secondary.push('کاهش ریسک وصول');if(unknown.length)secondary.push('ثبت سقف '+unknown.map(k=>names[k]).join(' و '));
  const nf=new Intl.NumberFormat('fa-IR',{maximumFractionDigits:0}),gaps=[];
  if(cashGap>1e-6)gaps.push(nf.format(cashGap)+' تومان نقدینگی');facilityGaps.forEach(x=>gaps.push(nf.format(x.amount)+' تومان ظرفیت '+names[x.method]));
- let note=negative?'ارزش فعلی خالص منفی است؛ با شرایط فعلی معامله ارزش اقتصادی ایجاد نمی‌کند.':!r.feasible?'اقتصاد معامله '+economics+' است؛ برای اجرا '+gaps.join(' و ')+' منابع اضافه لازم است.':unknown.length?'اقتصاد معامله '+economics+' است؛ قابلیت اجرا تا ثبت سقف '+unknown.map(k=>names[k]).join(' و ')+' تأیید نشده است.':action==='انجام معامله'?'اقتصاد معامله مناسب است و ظرفیت منابع ثبت‌شده نیاز معامله را پوشش می‌دهد.':action==='اصلاح دوره وصول'?'ریسک عدم وصول بالاست؛ شرایط فروش و تضمین وصول را بازبینی کنید.':border?'ارزش اقتصادی نزدیک صفر است؛ پیش از معامله قیمت یا هزینه‌ها را اصلاح کنید.':'حاشیه امن قیمت به هدف ثبت‌شده نمی‌رسد؛ مذاکره روی قیمت خرید توصیه می‌شود.';
- return {economic:{label:economics,status:negative?'bad':border?'warn':'good'},execution,action,secondary,note,cashGap,facilityGaps,unknownResources:unknown,executionConfirmed:r.feasible&&!unknown.length,target,economicCeiling:ceiling,executionNote:!r.feasible?'اجرای معامله مشروط به رفع کسری منابع است.':unknown.length?'سقف ثبت‌نشده، منبع نامحدود محسوب نمی‌شود.':''};
+ let note=negative?'ارزش فعلی خالص منفی است؛ با شرایط فعلی معامله ارزش اقتصادی ایجاد نمی‌کند.':!r.feasible?'اقتصاد معامله '+economics+' است؛ برای اجرا '+gaps.join(' و ')+' منابع اضافه لازم است.':unknown.length?'اقتصاد معامله '+economics+' است؛ قابلیت اجرا تا ثبت سقف '+unknown.map(k=>names[k]).join(' و ')+' تأیید نشده است.':action==='انجام معامله'?'اقتصاد معامله مناسب است و ظرفیت منابع ثبت‌شده نیاز معامله را پوشش می‌دهد.':weakReturn?'بازده دوره کمتر از حداقل انتظار همین دوره است؛ قیمت خرید یا زمان وصول را اصلاح کنید.':'حاشیه امن قیمت به هدف ثبت‌شده نمی‌رسد؛ مذاکره روی قیمت خرید توصیه می‌شود.';
+ return {economic:{label:economics,status:negative?'bad':border||weakReturn?'warn':'good'},execution,action,secondary,note,cashGap,facilityGaps,unknownResources:unknown,executionConfirmed:r.feasible&&!unknown.length,target,economicCeiling:ceiling,executionNote:!r.feasible?'اجرای معامله مشروط به رفع کسری منابع است.':unknown.length?'سقف ثبت‌نشده، منبع نامحدود محسوب نمی‌شود.':''};
 }
 function proposals(input,r,bounds={}){
  const d=normalize(input),out=[],safe=Number.isFinite(bounds.econ)?bounds.econ*(1-pct(d.safety)):null;
@@ -188,32 +188,5 @@ function proposals(input,r,bounds={}){
  return out;
 }
 
-
-// Stable presentation semantics; all monetary values use the central simulation.
-function sensitivityStatus(input,r,metric){
- const d=normalize(input),tol=r.economics.tolerance;
- if(metric==='peak'){
-  const lim=d.limits.cash;
-  if(r.peak<=tol)return {rank:3,label:'بدون کسری نقدی'};
-  if(lim==null)return {rank:-1,label:'سقف نامشخص'};
-  if(r.peak>lim+tol)return {rank:0,label:'بیش از سقف'};
-  return r.peak>=lim*.9?{rank:1,label:'نزدیک سقف'}:{rank:3,label:'در ظرفیت'};
- }
- const v=metric==='nominal'?r.nominal:metric==='margin'?r.profitMargin:r.npv;
- if(v==null||!Number.isFinite(v))return {rank:-1,label:'قابل محاسبه نیست'};
- const t=metric==='margin'?tol/Math.max(r.saleNetTotal,1):tol;
- if(v < -t)return {rank:0,label:metric==='npv'?'غیراقتصادی':'زیان‌ده'};
- if(Math.abs(v)<=t)return {rank:1,label:'سربه‌سر'};
- if(metric==='npv'&&d.safety>0&&d.safety<100){
-  let stressed;try{stressed=simulate({...d,buyTon:d.buyTon/(1-d.safety/100)});}catch(e){return {rank:2,label:'مثبت؛ هدف نامشخص'};}
-  return stressed.npv>=-stressed.economics.tolerance?{rank:3,label:'حاشیه هدف برقرار'}:{rank:2,label:'مثبت؛ کمتر از هدف'};
- }
- return {rank:2,label:metric==='npv'?'ارزش مثبت':'سود مثبت'};
-}
-function cashMilestones(r){
- const inflows=r.events.filter(e=>e.cash>0),outflows=r.events.filter(e=>e.cash<0&&e.cat!=='risk');
- return {lastInflow:inflows.length?Math.max(...inflows.map(e=>e.day)):null,lastPayment:outflows.length?Math.max(...outflows.map(e=>e.day)):null,lastEvent:r.events.length?r.lastCashDay:null};
-}
-
-root.TradeEngine={sensitivityStatus,cashMilestones,simulate,normalize,financingLeg,salesLeg,dailyProfile,solveBoundary,decision,calculateXirr,timeFactor,proposals,contractBasis};
+root.TradeEngine={simulate,normalize,financingLeg,salesLeg,dailyProfile,solveBoundary,decision,calculateXirr,timeFactor,proposals,contractBasis};
 })(typeof window==='undefined'?globalThis:window);

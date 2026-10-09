@@ -15,7 +15,7 @@ function model(d,r){
  }
  const f=k=>'@'+k+'@';const sumKeys=keys=>keys.length?keys.map(f).join('+'):'0';
  const rate=(key,label,value)=>n(key,label,(value||0)/100,null,'نسبت (۱ = ۱۰۰٪)');
- section('گروه سرمایه‌گذاری آتیه فولاد نقش جهان · ممیزی معامله · نسخه ۱۴');
+ section('گروه سرمایه‌گذاری آتیه فولاد نقش جهان · ممیزی معامله · نسخه ۱۵');
  note('همه جزئیات در همین شیت است. ستون C ورودی یا فرمول؛ ستون E متن همان فرمول؛ ستون‌های F تا J توضیح مبنا. مبالغ تومان و مقدار کالا تن است.');
  note('این فایل، ممیزی رویدادمحور معامله محاسبه‌شده است. برای تغییر نوع ابزار، تعداد اقساط، تاریخ‌ها، صفر به غیرصفر شدن یک رویداد یا فرض VAT، دوباره از نرم‌افزار خروجی بگیرید.');
  note('ورودی‌های آبی از قرارداد؛ سلول‌های محاسباتی فرمول‌دار. ستون «خروجی موتور» در کنترل نهایی، مرجع ثابت لحظه خروجی است؛ پس از ویرایش ورودی‌ها اختلاف با آن طبیعی است.');
@@ -143,7 +143,7 @@ function model(d,r){
  n('averageCapital','میانگین سرمایه درگیر',r.averageCapital,'IF(@dealDuration@>0,@capitalDays@/MAX(@dealDuration@,1E-100),"قابل تعیین نیست")');
  n('returnOnAverageCapital','بازده بر میانگین سرمایه درگیر',r.returnOnAverageCapital,'IF(ISNUMBER(@averageCapital@),IF(@averageCapital@>0,@profit@/MAX(@averageCapital@,1E-100),"قابل تعیین نیست"),"قابل تعیین نیست")','نسبت');
  n('capitalEfficiency','سود نسبت به اوج نقدینگی',r.cashReturn,'IF(@peak@>'+Math.max(1e-6,(r.saleNetTotal+r.purchaseBase+r.op+r.finCost)*1e-10)+',@profit@/MAX(@peak@,1E-100),"قابل تعیین نیست")','نسبت');
- note('بازده زمانی از جریان‌های نقدی تاریخ‌دار محاسبه می‌شود. فقط الگوی خروج سپس ورود با یک تغییر علامت، بازده یکتا دارد. سود نسبت به اوج نقدینگی یک شاخص جداگانه است. حاشیه سود = سود ÷ درآمد فروش.');
+ note('بازده زمانی از جریان‌های نقدی تاریخ‌دار محاسبه می‌شود. این شاخص در حکم معامله دخالت ندارد. موتور برای الگوی خروج سپس ورود با یک تغییر علامت مقدار گزارش می‌کند؛ برای سایر الگوها گزارش نمی‌شود. سود نسبت به اوج نقدینگی یک شاخص جداگانه است. حاشیه سود = سود ÷ درآمد فروش.');
  rows.push(['روز','شرح','جریان نقدی','تاریخ اکسل','علامت جریان','آخرین علامت','تغییر علامت','اولین روز فعال','آخرین روز فعال'].map(v=>({v,s:6})));
  const returnStart=rows.length+1;let previousSign=0,firstActive=null,lastActive=null;
  daily.forEach((x,i)=>{const row=rows.length+1,source=dailyStart+i,sg=Math.abs(x.cash)>1e-8?Math.sign(x.cash):0,change=sg&&previousSign&&sg!==previousSign?1:0;if(sg){if(firstActive===null)firstActive=x.day;lastActive=x.day;previousSign=sg;}
@@ -153,7 +153,7 @@ function model(d,r){
  n('returnSignChanges','تعداد تغییر علامت جریان نقدی',daily.reduce((o,x)=>{const sg=Math.abs(x.cash)>1e-8?Math.sign(x.cash):0;if(sg){if(o.prev&&sg!==o.prev)o.count++;o.prev=sg;}return o;},{prev:0,count:0}).count,'SUM(G'+returnStart+':G'+returnEnd+')','تعداد');
  n('periodDays','دوره کامل بازده',r.periodDays,'IF(ISNUMBER(H'+returnEnd+'),I'+returnEnd+'-H'+returnEnd+',0)','روز');
  n('xirr','بازده داخلی سالانه جریان نقدی',r.xirr,'IF(AND(@returnFirstSign@=-1,@returnSignChanges@=1,@periodDays@>0),IFERROR(XIRR(C'+returnStart+':C'+returnEnd+',D'+returnStart+':D'+returnEnd+','+(r.xirr!=null?r.xirr:0.1)+'),"قابل تعیین نیست"),"قابل تعیین نیست")','نسبت','با یک تغییر علامت خروج به ورود. روزهای بدون جریان در مدت بازده لحاظ نمی‌شوند.');
- n('periodReturn','بازده دوره معامله',r.periodReturn,'IF(ISNUMBER(@xirr@),IFERROR((1+@xirr@)^(@periodDays@/365)-1,"قابل تعیین نیست"),"قابل تعیین نیست")','نسبت');
+ n('periodReturn','معادل دوره‌ای نرخ بازده داخلی؛ تشخیصی',r.periodReturn,'IF(ISNUMBER(@xirr@),IFERROR((1+@xirr@)^(@periodDays@/365)-1,"قابل تعیین نیست"),"قابل تعیین نیست")','نسبت');
  n('monthly','معادل ماهانه',r.monthlyEquivalent,'IF(ISNUMBER(@xirr@),IFERROR((1+@xirr@)^(30/365)-1,"قابل تعیین نیست"),"قابل تعیین نیست")','نسبت');
  n('annual','معادل سالانه',r.annualEquivalent,'@xirr@','نسبت');
  n('expectedPeriod','حداقل بازده مورد انتظار دوره',r.expectedPeriodReturn,'IF(@periodDays@>0,(1+@hurdle@)^(@periodDays@/365)-1,"قابل تعیین نیست")','نسبت');
