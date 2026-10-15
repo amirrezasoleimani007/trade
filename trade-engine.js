@@ -48,7 +48,7 @@ function salesLeg(principal,l,vatRate,holding){
  return {method:l.method|| (l.due>0?'credit':'cash'),feeBaseMode,feeFactor,rateFactor,effectiveMarkupPct,priceFactor,finalReceivable:net+(l.feeDirection==='paid'?0:fee),principal,markup,net,rateMode,rate:l.markup||0,days:l.due,share:l.share,feeBase,feeRate:l.fee||0,feeMode,feeIncludesVat:!!l.feeIncludesVat,fee,feeDirection:l.feeDirection||'received',feeDay:holding+(l.feeTiming==='delivery'?0:l.due),day:holding+l.due};
 }
 function dailyProfile(events,start,mode='daily'){
- const map=new Map();events.filter(e=>e.affects).forEach(e=>{let row=map.get(e.day);if(!row){row={day:e.day,cash:0,inflow:0,outflow:0,labels:[]};map.set(e.day,row)}row.cash+=e.cash;row.inflow+=Math.max(0,e.cash);row.outflow+=Math.min(0,e.cash);row.labels.push(e.label)});
+ const map=new Map();events.filter(e=>e.affects).forEach(e=>{let row=map.get(e.day);if(!row){row={day:e.day,cash:0,inflow:0,outflow:0,labels:[]};map.set(e.day,row)}row.cash+=e.cash;/* ECL is a reduction of the same receipt, not an outgoing cash payment. */row.inflow+=e.cat==='risk'?e.cash:Math.max(0,e.cash);row.outflow+=e.cat==='risk'?0:Math.min(0,e.cash);row.labels.push(e.label)});
  const daily=[...map.values()].sort((a,b)=>a.day-b.day);let bal=0,peak=0,peakDay=start,cap=0,prev=start,firstNeg=null,recovery=null,initial=0;
  const tolerance=Math.max(1e-7,sum(events.map(e=>Math.abs(e.cash)))*1e-12);
  daily.forEach(row=>{row.opening=bal;row.intradayNeed=Math.max(0,-bal-row.outflow);cap+=Math.max(0,-bal)*(row.day-prev);bal+=row.cash;if(Math.abs(bal)<tolerance)bal=0;row.bal=bal;row.cum=bal;if(bal<0&&firstNeg===null)firstNeg=row.day;if(bal<0)recovery=null;if(firstNeg!==null&&recovery===null&&bal>=0)recovery=row.day;if(-bal>peak){peak=-bal;peakDay=row.day}if(row.day===start)initial=Math.max(0,-bal);prev=row.day});
@@ -114,7 +114,7 @@ function simulate(input){
   if(d.vatCreditMode==='offset')warnings.push('بازیافت VAT بر فرض وجود بدهی مالیاتی آتی کافی در روز تعیین‌شده است؛ این رویداد صرفه‌جویی نقدی است، نه واریز بانکی.');
  }}
  const risk=expectedLoss+(d.badDebtVatTreatment==='recoverable'?0:badDebtVatLoss),nominal=saleNetTotal-purchaseBase-op-finCost-risk-vatWriteOff;
- events.sort((a,b)=>a.day-b.day||a.seq-b.seq);const prof=dailyProfile(events,d.startDay,d.fundingMode),npv=sum(events.map(e=>e.econ/Math.pow(1+pct(d.hurdle),e.day/365))),tol=Math.max(1e-6,(saleNetTotal+purchaseBase+op+finCost)*1e-10),difference=sum(events.map(e=>e.econ))-nominal;
+ events.sort((a,b)=>a.day-b.day||a.seq-b.seq);const prof=dailyProfile(events,d.startDay,d.fundingMode),npv=d.hurdle===0?nominal:sum(events.map(e=>e.econ/Math.pow(1+pct(d.hurdle),e.day/365))),tol=Math.max(1e-6,(saleNetTotal+purchaseBase+op+finCost)*1e-10),difference=sum(events.map(e=>e.econ))-nominal;
  if(Math.abs(difference)>tol)throw Error('عدم تطبیق موتور اقتصاد و جریان نقدی.');
  const cashOK=d.limits.cash==null||prof.peak<=d.limits.cash+tol,facilityOK=Object.keys(usage).every(k=>d.limits[k]==null||usage[k]<=d.limits[k]+tol),feasible=cashOK&&facilityOK;
  // Cash efficiency is not a time-weighted investment return. Use the unique
@@ -133,7 +133,7 @@ function simulate(input){
  const economics={revenue:saleNetTotal,purchase:purchaseBase,operations:op,financing:finCost,risk,other:vatWriteOff,profit:nominal,npv,timeValueEffect:npv-nominal,profitMargin:saleNetTotal>0?nominal/saleNetTotal:null,totalCosts:purchaseBase+op+finCost+risk+vatWriteOff,reconciliationDifference:difference,tolerance:tol};
  const dealDuration=prof.lastDay-d.startDay,capitalDays=prof.cap,averageCapital=dealDuration>0?capitalDays/dealDuration:null,returnOnAverageCapital=averageCapital>tol?nominal/averageCapital:null;
  salesFinanceLegs.forEach((l,i)=>{const rs=receipts.filter(x=>x.source==='sales_'+i+'_net'||x.source==='sales_'+i+'_fee');l.vat=sum(rs.map(x=>x.vat));l.ecl=sum(rs.map(x=>x.loss));l.vatLoss=sum(rs.map(x=>x.vatLoss));l.netCollection=sum(rs.map(x=>x.base-x.loss+x.vat-x.vatLoss));l.presentValue=sum(events.filter(e=>e.auditRef&&rs.some(x=>e.auditRef.replace(/^-/,'').startsWith('receipt_'+receipts.indexOf(x)+'_'))).map(e=>e.cash/Math.pow(1+pct(d.hurdle),e.day/365)))-(l.feeDirection==='paid'?l.fee/Math.pow(1+pct(d.hurdle), (l.feeDay+d.startDay)/365):0);});
- return {...prof,fundingMode:d.fundingMode,insuranceBase,vatRecoveryDay:d.vatRecoveryDay,dealDuration,capitalDays,averageCapital,returnOnAverageCapital,xirr:xr.value,xirrStatus:xr.status,salesFinanceLegs,salesFeeIncome,salesFeeCost,receipts,accountingAdjustments,npv,nominal,gross:saleNetTotal-purchaseBase,op,finCost,saleNetTotal,purchaseBase,profitMargin:economics.profitMargin,periodReturn,periodDays,monthlyEquivalent,annualEquivalent,expectedPeriodReturn,periodExcess:periodReturn==null||expectedPeriodReturn==null?null:periodReturn-expectedPeriodReturn,annualReturn:annualEquivalent,cashReturn,recoveryDay:prof.recovery,firstFundingDay:prof.firstNeg,lastCashDay:prof.lastDay,weightedTenor:financedPrincipal?sum(financeLegs.map(l=>l.facilityPrincipal*l.days))/financedPrincipal:0,finCostPct:financedPrincipal?(finCost-salesFeeCost)/financedPrincipal*100:0,events,usage,cashOK,facilityOK,feasible,saleable,expectedLoss,badDebtVatLoss,inputVat,outputVat,vatPayable:payable,vatCredit:totalCredit,vatWriteOff,financeLegs,operations,economics,warnings,schemaVersion:12};
+ return {...prof,creditExposure:sum(receipts.filter(x=>x.credit).map(x=>x.base)),fundingMode:d.fundingMode,insuranceBase,vatRecoveryDay:d.vatRecoveryDay,dealDuration,capitalDays,averageCapital,returnOnAverageCapital,xirr:xr.value,xirrStatus:xr.status,salesFinanceLegs,salesFeeIncome,salesFeeCost,receipts,accountingAdjustments,npv,nominal,gross:saleNetTotal-purchaseBase,op,finCost,saleNetTotal,purchaseBase,profitMargin:economics.profitMargin,periodReturn,periodDays,monthlyEquivalent,annualEquivalent,expectedPeriodReturn,periodExcess:periodReturn==null||expectedPeriodReturn==null?null:periodReturn-expectedPeriodReturn,annualReturn:annualEquivalent,cashReturn,recoveryDay:prof.recovery,firstFundingDay:prof.firstNeg,lastCashDay:prof.lastDay,weightedTenor:financedPrincipal?sum(financeLegs.map(l=>l.facilityPrincipal*l.days))/financedPrincipal:0,finCostPct:financedPrincipal?(finCost-salesFeeCost)/financedPrincipal*100:0,events,usage,cashOK,facilityOK,feasible,saleable,expectedLoss,badDebtVatLoss,inputVat,outputVat,vatPayable:payable,vatCredit:totalCredit,vatWriteOff,financeLegs,operations,economics,warnings,schemaVersion:12};
 }
 function solveBoundary(input,variable,kind){
  const d=normalize(input),limitKeys=kind==='cash'?['cash']:kind==='facility'?['cheque','lc','boe']:['cash','cheque','lc','boe'];
@@ -168,9 +168,10 @@ function decision(input,r,bounds={}){
  const cashGap=d.limits.cash==null?0:Math.max(0,r.peak-d.limits.cash),facilityGaps=Object.keys(r.usage).filter(k=>d.limits[k]!=null&&r.usage[k]>d.limits[k]+1e-6).map(k=>({method:k,amount:r.usage[k]-d.limits[k]}));
  const tolerance=Math.max(1e-6,r.economics.tolerance),negative=r.npv < -tolerance,border=Math.abs(r.npv)<=tolerance;
  // v15: economic verdict uses NPV; internal return is diagnostic only.
+ const highCreditRisk=r.creditExposure>tolerance&&d.expectedCreditLoss>8;
  const economics=negative?'نامناسب':border?'مرزی':'مناسب',execution=!r.feasible?'نیازمند تأمین مالی':unknown.length?'نیازمند تأیید منابع':'قابل اجرا';
- let action=negative?'عدم انجام معامله':!r.feasible?'اصلاح ساختار تأمین مالی':border||target!=null&&d.buyTon>target?'مذاکره روی قیمت خرید':d.expectedCreditLoss>8?'اصلاح دوره وصول':unknown.length?'تأیید ظرفیت منابع':'انجام معامله';
- const secondary=[];if(d.expectedCreditLoss>8)secondary.push('کاهش ریسک وصول');if(unknown.length)secondary.push('ثبت سقف '+unknown.map(k=>names[k]).join(' و '));
+ let action=negative?'عدم انجام معامله':!r.feasible?'اصلاح ساختار تأمین مالی':border||target!=null&&d.buyTon>target?'مذاکره روی قیمت خرید':highCreditRisk?'اصلاح دوره وصول':unknown.length?'تأیید ظرفیت منابع':'انجام معامله';
+ const secondary=[];if(highCreditRisk)secondary.push('کاهش ریسک وصول');if(unknown.length)secondary.push('ثبت سقف '+unknown.map(k=>names[k]).join(' و '));
  const nf=new Intl.NumberFormat('fa-IR',{maximumFractionDigits:0}),gaps=[];
  if(cashGap>1e-6)gaps.push(nf.format(cashGap)+' تومان نقدینگی');facilityGaps.forEach(x=>gaps.push(nf.format(x.amount)+' تومان ظرفیت '+names[x.method]));
  let note=negative?'ارزش فعلی خالص منفی است؛ با شرایط فعلی معامله ارزش اقتصادی ایجاد نمی‌کند.':!r.feasible?'اقتصاد معامله '+economics+' است؛ برای اجرا '+gaps.join(' و ')+' منابع اضافه لازم است.':unknown.length?'اقتصاد معامله '+economics+' است؛ قابلیت اجرا تا ثبت سقف '+unknown.map(k=>names[k]).join(' و ')+' تأیید نشده است.':action==='انجام معامله'?'اقتصاد معامله مناسب است و ظرفیت منابع ثبت‌شده نیاز معامله را پوشش می‌دهد.':action==='اصلاح دوره وصول'?'ریسک عدم وصول بالاست؛ شرایط فروش و تضمین وصول را بازبینی کنید.':border?'ارزش اقتصادی نزدیک صفر است؛ پیش از معامله قیمت یا هزینه‌ها را اصلاح کنید.':'حاشیه امن قیمت به هدف ثبت‌شده نمی‌رسد؛ مذاکره روی قیمت خرید توصیه می‌شود.';
@@ -211,8 +212,9 @@ function sensitivityStatus(input,r,metric){
  return {rank:2,label:metric==='npv'?'ارزش مثبت':'سود مثبت'};
 }
 function cashMilestones(r){
- const inflows=r.events.filter(e=>e.cash>0),outflows=r.events.filter(e=>e.cash<0&&e.cat!=='risk');
- return {lastInflow:inflows.length?Math.max(...inflows.map(e=>e.day)):null,lastPayment:outflows.length?Math.max(...outflows.map(e=>e.day)):null,lastEvent:r.events.length?r.lastCashDay:null};
+ const tolerance=Math.max(1e-7,sum(r.events.map(e=>Math.abs(e.cash)))*1e-12);
+ const incoming=r.daily.filter(x=>x.inflow>tolerance),outgoing=r.daily.filter(x=>x.outflow < -tolerance);
+ return {lastInflow:incoming.length?incoming.at(-1).day:null,lastPayment:outgoing.length?outgoing.at(-1).day:null,lastEvent:r.events.length?r.lastCashDay:null};
 }
 
 root.TradeEngine={sensitivityStatus,cashMilestones,simulate,normalize,financingLeg,salesLeg,dailyProfile,solveBoundary,decision,calculateXirr,timeFactor,proposals,contractBasis};

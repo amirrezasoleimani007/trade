@@ -1,0 +1,1 @@
+{"status":"PASS","checks":["unknown funding not approved","fee integration","scenario edit/copy/persistence","mixed share and amount","proposal preserve/compare","responsive 360/390/768/1440","large amounts","PDF and Excel downloads"],"out":"/tmp/trade16-ui"}
