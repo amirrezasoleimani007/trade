@@ -1,0 +1,55 @@
+/* v16 — explicit contract assumptions, optional sales charges and review; monetary values use TradeEngine. */
+(function(root){
+'use strict';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function create(a){const $=a.el,E=root.TradeEngine,n=a.fmtSmart,m=a.exact;let refreshing=false;
+const names={cash:'نقدی',cheque:'چک',lc:'اعتبار اسنادی',boe:'برات',credit:'اعتباری'};
+function write(id,text){const t=$(id);if(t&&t.textContent!==text)t.textContent=text;}
+function note(id,text){const el=$(id);if(!el)return;let t=document.getElementById(id+'Help');if(!t){t=document.createElement('p');t.id=id+'Help';t.className='note input-help';el.closest('.field').append(t);el.setAttribute('aria-describedby',t.id)}if(t.textContent!==text)t.textContent=text;}
+function label(id,text){const t=$(id)?.closest('.field')?.querySelector('label');if(t)t.textContent=text;}
+function badge(parent,id){let b=$(id);if(!b){b=document.createElement('span');b.id=id;b.className='active-assumptions';parent.append(b)}return b;}
+function setSource(source){$('hurdleRate').dataset.source=source;refreshSource();}
+function refreshSource(){const source=$('hurdleRate').dataset.source||'manual';note('hurdleRate',source==='company'?'منبع: تنظیمات ذخیره‌شده شرکت در این مرورگر؛ نرخ سالانه و قابل ویرایش است.':source==='starter'?'پیش‌فرض پیشنهادی نرم‌افزار: ۳۵٪ سالانه؛ با نرخ مورد تأیید شرکت تطبیق دهید.':'منبع: ورودی همین معامله؛ نرخ سالانه است.');}
+function setup(){
+ label('hurdleRate','حداقل بازده مورد انتظار سالانه (٪)');$('hurdleRate').dataset.source='starter';$('hurdleRate').addEventListener('input',()=>setSource('manual'));
+ const panel=document.createElement('section');panel.id='contractReview';panel.className='contract-review';panel.setAttribute('aria-labelledby','contractReviewTitle');panel.innerHTML='<div class="review-heading"><h2 id="contractReviewTitle">مرور قرارداد پیش از محاسبه</h2><span>مبالغ به تومان</span></div><div id="contractReviewBody"></div><p class="note">ارقام بر اساس مفروضات جاری و همان موتور محاسبات هستند. پیش‌پرداخت، وجه بلوکه و VAT قابل بازیافت، هزینه دوباره محسوب نمی‌شوند.</p>';$('financePage').append(panel);
+ ['cashLimit','chequeLimit','lcLimit','boeLimit'].forEach(id=>note(id,'خالی: ظرفیت هنوز تأیید نشده · صفر: ظرفیتی در دسترس نیست.'));
+ label('purchaseAdvance','پیش‌پرداخت اصل خرید (٪)');$('purchaseAdvance').closest('.field').querySelectorAll('.note').forEach(n=>n.remove());note('purchaseAdvance','در روز شروع معامله پرداخت می‌شود؛ روش‌های زیر مربوط به مانده خرید هستند.');
+ document.addEventListener('input',e=>{if(e.target.closest('#quickPage,#financePage'))refresh()});document.addEventListener('change',e=>{if(e.target.closest('#quickPage,#financePage'))refresh()});refresh();
+}
+function purchaseBasics(){
+ const fields=$('fundingSimple')?.querySelector('.fields');if(fields&&$('fsFeeMode'))['fsFeeMode','fsFeeBase','fsFeeTiming'].forEach(id=>{const f=$(id)?.closest('.field');if(f&&f.parentElement!==fields)fields.append(f)});
+ label('fsDue','پرداخت مانده خرید؛ چند روز پس از شروع؟');label('fsMode','مبنای زمانی هزینه تأمین مالی');label('fsFeeMode','مبنای زمانی کارمزد خرید');label('fsFeeBase','کارمزد روی چه مبلغی محاسبه شود؟');label('fsFeeTiming','کارمزد چه زمانی پرداخت شود؟');
+ const modes={monthly:'ماهانه؛ نرخ × تعداد روز ÷ ۳۰',annual:'سالانه؛ نرخ × تعداد روز ÷ ۳۶۵',flat:'یک‌بار برای کل قرارداد'};
+ if($('fsRate')){note('fsRate',modes[$('fsMode').value]);note('fsFee',modes[$('fsFeeMode').value]);}
+ const mix=$('mixDetails');if(mix){const toggle=document.querySelector('[data-toggle="mixDetails"]');if(toggle){toggle.replaceWith(Object.assign(document.createElement('h3'),{textContent:'شرایط هر روش پرداخت',className:'inline-heading'}));}mix.classList.remove('hidden');mix.querySelectorAll('fieldset').forEach(fs=>{const first=fs.querySelector('.fields');fs.querySelectorAll('.md').forEach(el=>{const k=el.dataset.md.split('|')[1],f=el.closest('.field');if(!el.id)el.id='mix_'+el.dataset.md.replace('|','_');f.querySelector('label').htmlFor=el.id;if(['feeMode','feeBaseMode','feeFinanced'].includes(k)&&f.parentElement!==first)first.append(f);if(k==='due')f.querySelector('label').textContent='پرداخت؛ روز پس از شروع';if(['rate','fee'].includes(k)){let h=f.querySelector('.input-help');if(!h){h=document.createElement('p');h.className='note input-help';f.append(h)}const method=el.dataset.md.split('|')[0],model=a.getModels().fundingDetails[method];h.textContent=modes[model[k==='rate'?'costMode':'feeMode']||'flat'];}});});}
+ const det=$('fundingSimple')?.querySelector('.finance-details > summary');if(det)det.innerHTML='<span>مالیات و شرایط خاص ابزار خرید</span><small>مفروضات کارمزد در بالا دیده می‌شوند</small>';
+}
+function salesTop(){$('salesSimple')?.querySelectorAll('.tranche').forEach(el=>{if(!el.id)el.id='saleTranche_'+el.dataset.i+'_'+el.dataset.k;const label=el.closest('.field')?.querySelector('label');if(label)label.htmlFor=el.id;});const section=$('saleAdvancePanel');if(section&&section.parentElement!==$('salesChoices').parentElement)$('salesChoices').before(section);label('salePrepayPct','پیش‌دریافت از اصل فروش (٪)');label('salePrepayDays','پیش‌دریافت؛ چند روز پیش از تحویل؟');note('salePrepayDays','روز دریافت = روز تحویل فروش − این فاصله. صفر یعنی روز تحویل؛ پیش از شروع معامله مجاز نیست.');label('saleDue','وصول مانده؛ چند روز پس از تحویل؟');note('saleMarkup','اضافه‌قیمت فروش اعتباری مستقل از هزینه وصول است؛ اگر قیمت فروش شامل آن است، دوباره وارد نکنید.');}
+function refresh(){if(refreshing)return;refreshing=true;try{
+ refreshSource();purchaseBasics();salesTop();
+ const m0=a.getModels(),v=id=>a.parseNum($(id)?.value||''),tax=[v('purchaseVatRate'),v('saleVatRate'),v('serviceVatRate')];
+ const risk=$('riskInputs')?.querySelector('summary');if(risk)badge(risk,'riskActive').textContent='هدف حاشیه امن '+n(v('safetyMargin'))+'٪ · افت '+n(v('shrinkage'))+'٪ · ریسک وصول '+n(v('expectedCreditLoss'))+'٪';
+ const ts=$('financePage').querySelector('.tax-settings details > summary');if(ts)badge(ts,'taxActive').textContent=tax.some(x=>x>0)?'فعال: خرید '+n(tax[0])+'٪ · فروش '+n(tax[1])+'٪ · خدمات '+n(tax[2])+'٪':'بدون مالیات';
+ const pre=$('saleAdvanceStatus');if(pre)pre.textContent='پیش‌دریافت '+n(m0.saleConfig.salePrepayPct||0)+'٪ · مانده اصل فروش '+n(100-(m0.saleConfig.salePrepayPct||0))+'٪';
+ const box=$('contractReviewBody');if(!box)return;
+ try{const d=a.baseData();if(!(d.qTon>0&&d.buyTon>0&&d.sellTon>0))throw Error('ابتدا مقدار و قیمت‌های خرید و فروش را کامل کنید.');const r=E.simulate(d),b=E.contractBasis(d),buyAdvance=b.purchaseBase*d.advance/100,saleAdvance=b.saleBase*d.salePrepayPct/100;
+ const facts=(title,rows)=>'<div class="review-side"><h3>'+title+'</h3><dl>'+rows.map(x=>'<div><dt>'+x[0]+'</dt><dd><bdi>'+esc(x[1])+'</bdi></dd></div>').join('')+'</dl></div>';
+ const purchases=d.finLegs.map(l=>names[l.method]+' '+n(l.share)+'٪: روز '+n(l.method==='cash'?0:l.due)).join('؛ '),sales=r.salesFinanceLegs.map(l=>names[l.method]+' '+n(l.share)+'٪: روز '+n(l.day+d.startDay)).join('؛ ');
+ const html='<div class="review-columns">'+facts('خرید؛ اصل قرارداد بدون مالیات',[['مبلغ اصل خرید',m(r.purchaseBase)],['پیش‌پرداخت در روز '+n(d.startDay),m(buyAdvance)],['مانده اصل خرید',m(b.purchaseRemaining)],['هزینه مالی و کارمزد خرید',m(r.financeLegs.reduce((s,l)=>s+l.financeMarkup+l.fee,0))],['برنامه پرداخت مانده',purchases]])+facts('فروش؛ درآمد بدون مالیات',[['اصل فروش پیش از اضافه‌قیمت',m(b.saleBase)],['پیش‌دریافت در روز '+n(d.startDay+d.holding-d.salePrepayDays),m(saleAdvance)],['مانده اصل فروش',m(b.saleRemaining)],['درآمد کل با اضافه‌قیمت و خدمات',m(r.saleNetTotal)],['هزینه وصول پرداختی شرکت',m(r.salesFeeCost)],['برنامه وصول مانده',sales]])+'</div><p class="review-foot">خرید در روز '+n(d.startDay)+' · تحویل فروش در روز '+n(d.startDay+d.holding)+' · نرخ تنزیل '+n(d.hurdle)+'٪ سالانه · '+(tax.some(x=>x>0)?'مالیات در جریان نقدی جداگانه لحاظ می‌شود.':'نرخ‌های مالیات صفر هستند.')+'</p>';
+ if(box.innerHTML!==html)box.innerHTML=html;
+ }catch(e){const text='<p class="review-incomplete" role="status">مرور قرارداد کامل نیست: '+esc(e.message)+'</p>';if(box.innerHTML!==text)box.innerHTML=text;}
+ }finally{refreshing=false;}}
+function compareChanges(s,base){if(s===base)return '<p class="scenario-changes">سناریوی مبنا</p>';if(!s.form?.inputs||!s.form?.models||!base.form?.inputs||!base.form?.models)return '<p class="scenario-changes">برای مقایسه مفروضات، فایل کامل معامله را باز کنید.</p>';
+ const x=s.form,y=base.form,labels={commodity:'کالا',fsDue:'روز پرداخت از شروع',fsMode:'مبنای هزینه مالی',fsRate:'نرخ هزینه مالی',fsFee:'نرخ کارمزد خرید',fsFeeMode:'مبنای زمانی کارمزد',fsFeeBase:'مبلغ مبنای کارمزد',fsFeeTiming:'زمان کارمزد',saleDue:'روز وصول از تحویل',saleMarkup:'نرخ اضافه‌قیمت فروش',saleMarkupMode:'مبنای اضافه‌قیمت فروش',quantity:'مقدار',quantityUnit:'واحد مقدار',purchasePrice:'قیمت خرید',salePrice:'قیمت فروش',holdingDays:'زمان تحویل',hurdleRate:'نرخ تنزیل',purchaseQuoteUnit:'واحد قیمت خرید',saleQuoteUnit:'واحد قیمت فروش',cashLimit:'سقف نقدینگی',chequeLimit:'سقف چک',lcLimit:'سقف LC',boeLimit:'سقف برات',purchaseAdvance:'پیش‌پرداخت خرید',salePrepayPct:'پیش‌دریافت فروش',salePrepayDays:'زمان پیش‌دریافت',safetyMargin:'حاشیه امن',expectedCreditLoss:'ریسک وصول',purchaseVatRate:'مالیات خرید',saleVatRate:'مالیات فروش'};
+ const changes=[],friendly=v=>({monthly:'ماهانه',annual:'سالانه',flat:'کل قرارداد',facility:'اصل تأمین‌شده',total:'اصل با هزینه مالی',upfront:'ابتدای معامله',maturity:'سررسید',ton:'تن',kg:'کیلوگرم',piece:'عدد'}[v]||v||'ثبت نشده');const normalized=v=>String(v??'').replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/[٬,]/g,'').trim();
+ for(const [key,l] of Object.entries(labels))if(normalized(x.inputs[key])!==normalized(y.inputs[key]))changes.push(l+': '+friendly(y.inputs[key])+' ← '+friendly(x.inputs[key]));
+ for(const [key,l]of Object.entries({tradeType:'نوع تجارت',funding:'روش پرداخت',sales:'روش وصول',fundingDetails:'نرخ‌ها و زمان پرداخت',mixShares:'ترکیب خرید',saleConfig:'زمان و اضافه‌قیمت فروش',saleFees:'هزینه یا خدمت فروش',salesTranches:'ترکیب وصول',customCosts:'هزینه‌های عملیات'}))if(JSON.stringify(x.models[key])!==JSON.stringify(y.models[key]))changes.push(l+' تغییر کرده است');
+ // Include every remaining assumption without overwhelming the compact summary.
+ const covered=new Set(Object.keys(labels));const remaining=Object.keys({...x.inputs,...y.inputs}).filter(k=>!covered.has(k)&&normalized(x.inputs[k])!==normalized(y.inputs[k]));if(remaining.length)changes.push(n(remaining.length)+' ورودی تکمیلی تغییر کرده است');
+ return '<details class="scenario-diff"'+(changes.length?' open':'')+'><summary>تفاوت مفروضات با مبنا؛ '+n(changes.length)+' مورد</summary>'+(changes.length?'<ul tabindex="0" role="region" aria-label="تفاوت مفروضات سناریو">'+changes.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul>':'<p>مفروضات ثبت‌شده یکسان هستند.</p>')+'</details>';
+}
+return {setup,refresh,purchaseBasics,salesTop,setSource,compareChanges};
+}
+root.TradeEntry={create};
+})(typeof window==='undefined'?globalThis:window);
