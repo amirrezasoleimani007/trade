@@ -47,7 +47,7 @@ function compareChanges(s,base){if(s===base)return '<p class="scenario-changes">
  for(const [key,l]of Object.entries({tradeType:'نوع تجارت',funding:'روش پرداخت',sales:'روش وصول',fundingDetails:'نرخ‌ها و زمان پرداخت',mixShares:'ترکیب خرید',saleConfig:'زمان و اضافه‌قیمت فروش',saleFees:'هزینه یا خدمت فروش',salesTranches:'ترکیب وصول',customCosts:'هزینه‌های عملیات'}))if(JSON.stringify(x.models[key])!==JSON.stringify(y.models[key]))changes.push(l+' تغییر کرده است');
  // Include every remaining assumption without overwhelming the compact summary.
  const covered=new Set(Object.keys(labels));const remaining=Object.keys({...x.inputs,...y.inputs}).filter(k=>!covered.has(k)&&normalized(x.inputs[k])!==normalized(y.inputs[k]));if(remaining.length)changes.push(n(remaining.length)+' ورودی تکمیلی تغییر کرده است');
- return '<details class="scenario-diff"'+(changes.length?' open':'')+'><summary>تفاوت مفروضات با مبنا؛ '+n(changes.length)+' مورد</summary>'+(changes.length?'<ul tabindex="0" role="region" aria-label="تفاوت مفروضات سناریو">'+changes.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul>':'<p>مفروضات ثبت‌شده یکسان هستند.</p>')+'</details>';
+ return '<details class="scenario-diff"><summary>تفاوت مفروضات با مبنا؛ '+n(changes.length)+' مورد</summary>'+(changes.length?'<ul tabindex="0" role="region" aria-label="تفاوت مفروضات سناریو">'+changes.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul>':'<p>مفروضات ثبت‌شده یکسان هستند.</p>')+'</details>';
 }
 return {setup,refresh,purchaseBasics,salesTop,setSource,compareChanges};
 }

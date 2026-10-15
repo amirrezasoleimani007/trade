@@ -1,0 +1,280 @@
+{
+  "status": "PASS",
+  "responsive": [
+    {
+      "width": 360,
+      "method": "cash",
+      "overflow": false,
+      "clipped": [],
+      "stretch": "1112.06px",
+      "footer": 1000
+    },
+    {
+      "width": 360,
+      "method": "lc",
+      "overflow": false,
+      "clipped": [],
+      "stretch": "1112.06px",
+      "footer": 1000
+    },
+    {
+      "width": 360,
+      "method": "mixed",
+      "overflow": false,
+      "clipped": [],
+      "stretch": "1112.06px",
+      "footer": 1000
+    },
+    {
+      "width": 390,
+      "method": "cash",
+      "overflow": false,
+      "clipped": [],
+      "stretch": "1086.17px",
+      "footer": 1000
+    },
+    {
+      "width": 390,
+      "method": "lc",
+      "overflow": false,
+      "clipped": [],
+      "stretch": "1086.17px",
+      "footer": 1000
+    },
+    {
+      "width": 390,
+      "method": "mixed",
+      "overflow": false,
+      "clipped": [],
+      "stretch": "1086.17px",
+      "footer": 1000
+    },
+    {
+      "width": 680,
+      "method": "cash",
+      "overflow": false,
+      "clipped": [],
+      "stretch": "986.844px",
+      "footer": 1000
+    },
+    {
+      "width": 680,
+      "method": "lc",
+      "overflow": false,
+      "clipped": [],
+      "stretch": "986.844px",
+      "footer": 1000
+    },
+    {
+      "width": 680,
+      "method": "mixed",
+      "overflow": false,
+      "clipped": [],
+      "stretch": "986.844px",
+      "footer": 1000
+    },
+    {
+      "width": 768,
+      "method": "cash",
+      "overflow": false,
+      "clipped": [
+        "cashLimit"
+      ],
+      "stretch": "979.797px",
+      "footer": 1000
+    },
+    {
+      "width": 768,
+      "method": "lc",
+      "overflow": false,
+      "clipped": [
+        "cashLimit"
+      ],
+      "stretch": "979.797px",
+      "footer": 1000
+    },
+    {
+      "width": 768,
+      "method": "mixed",
+      "overflow": false,
+      "clipped": [
+        "cashLimit"
+      ],
+      "stretch": "979.797px",
+      "footer": 1000
+    },
+    {
+      "width": 1024,
+      "method": "cash",
+      "overflow": false,
+      "clipped": [
+        "cashLimit"
+      ],
+      "stretch": "979.797px",
+      "footer": 1000
+    },
+    {
+      "width": 1024,
+      "method": "lc",
+      "overflow": false,
+      "clipped": [
+        "cashLimit"
+      ],
+      "stretch": "979.797px",
+      "footer": 1000
+    },
+    {
+      "width": 1024,
+      "method": "mixed",
+      "overflow": false,
+      "clipped": [
+        "cashLimit"
+      ],
+      "stretch": "979.797px",
+      "footer": 1000
+    },
+    {
+      "width": 1440,
+      "method": "cash",
+      "overflow": false,
+      "clipped": [],
+      "stretch": "979.797px",
+      "footer": 1000
+    },
+    {
+      "width": 1440,
+      "method": "lc",
+      "overflow": false,
+      "clipped": [],
+      "stretch": "979.797px",
+      "footer": 1000
+    },
+    {
+      "width": 1440,
+      "method": "mixed",
+      "overflow": false,
+      "clipped": [],
+      "stretch": "979.797px",
+      "footer": 1000
+    },
+    {
+      "width": 1920,
+      "method": "cash",
+      "overflow": false,
+      "clipped": [],
+      "stretch": "954.453px",
+      "footer": 1000
+    },
+    {
+      "width": 1920,
+      "method": "lc",
+      "overflow": false,
+      "clipped": [],
+      "stretch": "954.453px",
+      "footer": 1000
+    },
+    {
+      "width": 1920,
+      "method": "mixed",
+      "overflow": false,
+      "clipped": [],
+      "stretch": "954.453px",
+      "footer": 1000
+    }
+  ],
+  "reports": [
+    {
+      "name": "committee-cash",
+      "pages": 3,
+      "reference": "AF-17-14A0DE12"
+    },
+    {
+      "name": "committee-lc-credit",
+      "pages": 3,
+      "reference": "AF-17-B68B347B"
+    },
+    {
+      "name": "committee-high-profit",
+      "pages": 3,
+      "reference": "AF-17-707FE7B0"
+    },
+    {
+      "name": "committee-low-profit",
+      "pages": 3,
+      "reference": "AF-17-633D4DD5"
+    },
+    {
+      "name": "committee-loss",
+      "pages": 3,
+      "reference": "AF-17-71730973"
+    },
+    {
+      "name": "committee-heavy-finance",
+      "pages": 3,
+      "reference": "AF-17-5777E698"
+    },
+    {
+      "name": "committee-tiny-costs",
+      "pages": 4,
+      "reference": "AF-17-ABC4161A"
+    },
+    {
+      "name": "committee-mixed-domestic",
+      "pages": 4,
+      "reference": "AF-17-2706DB02"
+    },
+    {
+      "name": "committee-mixed-import",
+      "pages": 4,
+      "reference": "AF-17-1DFA7B9A"
+    },
+    {
+      "name": "committee-mixed-export",
+      "pages": 6,
+      "reference": "AF-17-306EC0EC"
+    },
+    {
+      "name": "committee-from-mobile",
+      "pages": 6,
+      "reference": "AF-17-306EC0EC"
+    },
+    {
+      "name": "committee-large-values",
+      "pages": 7,
+      "reference": "AF-17-AD734CDE"
+    }
+  ],
+  "scenarios": [
+    {
+      "name": "high-profit",
+      "profit": 2918880000,
+      "npv": 2680299050.9478664,
+      "margin": 0.4792906403940887
+    },
+    {
+      "name": "low-profit",
+      "profit": 327455000,
+      "npv": 267322531.34687233,
+      "margin": 0.09761445190523389
+    },
+    {
+      "name": "loss",
+      "profit": -286620000,
+      "npv": -304386857.28744864,
+      "margin": -0.10458675424192665
+    },
+    {
+      "name": "heavy-finance",
+      "profit": -1117620000,
+      "npv": -1074691728.2433825,
+      "margin": -0.3336677115987461
+    },
+    {
+      "name": "tiny-costs",
+      "profit": 626879928,
+      "npv": 546089852.3288898,
+      "margin": 0.1715599146141215
+    }
+  ],
+  "errors": []
+}

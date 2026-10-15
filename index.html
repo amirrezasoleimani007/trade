@@ -3,14 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>تصمیم‌یار بازرگانی آتیه فولاد | نسخه ۱۶٫۱</title>
+<title>تصمیم‌یار بازرگانی آتیه فولاد | نسخه ۱۷</title>
 
 
 
 <link rel="icon" type="image/png" href="atieh-logo.png">
 <meta name="description" content="سامانه ارزیابی اقتصاد معامله، ظرفیت منابع، مذاکره و تحلیل جریان نقدی گروه سرمایه‌گذاری آتیه فولاد نقش جهان">
 <meta name="theme-color" content="#142d40">
-<link rel="stylesheet" href="studio.css?v=161">
+<link rel="stylesheet" href="studio.css?v=170">
+<link rel="stylesheet" href="final-polish.css?v=170">
 </head>
 <body>
 <div id="intro" class="intro" role="dialog" aria-modal="true" aria-label="ورود به نرم‌افزار">
@@ -25,12 +26,13 @@
     <button id="introEnter" class="intro-enter" type="button">ورود به سامانه</button>
   </div>
 </div>
-<script src="single-sheet-export.js?v=161"></script>
-<script src="trade-engine.js?v=161"></script>
-<script src="economics-view.js?v=161"></script>
-<script src="studio.js?v=161"></script>
-<script src="entry-workflow.js?v=161"></script>
-<script src="experience.js?v=161"></script>
+<script src="single-sheet-export.js?v=170"></script>
+<script src="trade-engine.js?v=170"></script>
+<script src="economics-view.js?v=170"></script>
+<script src="studio.js?v=170"></script>
+<script src="entry-workflow.js?v=170"></script>
+<script src="committee-report.js?v=170"></script>
+<script src="experience.js?v=170"></script>
 <script>
 (function(){
   var intro=document.getElementById('intro'),btn=document.getElementById('introEnter');
@@ -41,7 +43,7 @@
 </script>
 <div class="app">
 <header class="topbar">
-  <div class="brand"><div class="mark"><img src="atieh-logo.png" alt="آتیه فولاد"></div><div><div class="brand-title">تصمیم‌یار بازرگانی آتیه فولاد</div><div class="brand-sub">نسخه ۱۶٫۱ · قرارداد روشن، تصمیم دقیق</div></div></div>
+  <div class="brand"><div class="mark"><img src="atieh-logo.png" alt="آتیه فولاد"></div><div><div class="brand-title">تصمیم‌یار بازرگانی آتیه فولاد</div><div class="brand-sub">نسخه ۱۷ · قرارداد روشن، تصمیم دقیق</div></div></div>
   <div class="top-actions"><button id="compareOpen" class="top-btn compare-open">مقایسه <span id="compareCount">0</span></button><button id="saveDefaults" class="top-btn">ذخیره تنظیمات</button><button id="resetAll" class="top-btn">معامله جدید</button></div>
 </header>
 <div class="shell">
@@ -280,7 +282,7 @@ function baseData(){syncFundingInputs();readSalesTranches();
 }
 function validateBase(d){if(d.qTon<=0)throw new Error('مقدار معامله باید بیشتر از صفر باشد.');if(d.buyTon<=0||d.sellTon<=0)throw new Error('قیمت خرید و فروش را کامل کن.');if(d.startDay<0||d.holding<0)throw new Error('زمان شروع و خواب کالا نمی‌تواند منفی باشد.');if(!String(el('hurdleRate').value||'').trim())throw new Error('نرخ تنزیل سالانه را در بخش اول معامله وارد کن.');if(d.hurdle<0||d.hurdle>500)throw new Error('نرخ تنزیل سالانه باید بین صفر و ۵۰۰ درصد باشد.');if((d.buyCurrency!=='TOMAN'&&d.buyCurrency!=='RIAL'&&d.buyFx<=0)||(d.sellCurrency!=='TOMAN'&&d.sellCurrency!=='RIAL'&&d.sellFx<=0))throw new Error('نرخ ارز باید بیشتر از صفر باشد.');clampPct('پیش‌پرداخت',d.advance);clampPct('VAT خرید',d.purchaseVat);clampPct('VAT فروش',d.saleVat);clampPct('VAT خدمات',d.serviceVat);clampPct('افت',d.shrink);clampPct('ریسک عدم وصول',d.expectedCreditLoss);clampPct('پیش‌دریافت فروش',d.salePrepayPct);if(d.salePrepayDays<0)throw new Error('روز پیش‌دریافت نمی‌تواند منفی باشد.');if(d.startDay+d.holding-d.salePrepayDays<0)throw new Error('پیش‌دریافت فروش نمی‌تواند قبل از امروز قرار بگیرد.');if(d.insurancePct<0||d.transferPct<0||d.customsPct<0)throw new Error('درصد بیمه، انتقال ارز یا گمرک نمی‌تواند منفی باشد.');if(d.insurancePct>100||d.transferPct>100)throw new Error('درصد بیمه یا انتقال ارز باید حداکثر ۱۰۰٪ باشد.');if(d.foreignTimingPreset==='custom'&&(d.foreignFreightDay<0||d.foreignCustomsDay<0||d.foreignVatDay<0))throw new Error('روزهای زمان‌بندی تجارت خارجی نمی‌توانند منفی باشند.');if(d.tradeType==='import'&&d.foreignTimingPreset==='custom'){if(d.foreignCustomsDay>d.holding||d.foreignVatDay>d.holding)throw new Error('گمرک و VAT واردات باید حداکثر تا زمان آماده‌شدن کالا برای فروش پرداخت شوند.');if(d.foreignVatDay<d.foreignCustomsDay)throw new Error('VAT واردات نمی‌تواند قبل از گمرک قرار بگیرد.')}var sf=0;d.finLegs.forEach(function(l){if(l.share<0||l.due<0||l.rate<0||l.fee<0||l.margin<0)throw new Error('سهم، سررسید یا هزینه تأمین مالی نامعتبر است.');clampPct('سهم روش پرداخت',l.share);clampPct('کارمزد',l.fee);clampPct('پول بلوکه',l.margin);sf+=l.share});if(Math.abs(sf-100)>.01)throw new Error('جمع روش‌های پرداخت خرید باید ۱۰۰٪ باشد.');var ss=0;d.salesLegs.forEach(function(l){if(l.due<0||l.markup<=-100)throw new Error('شرایط وصول فروش نامعتبر است.');clampPct('سهم وصول',l.share);ss+=l.share});if(Math.abs(ss-100)>.01)throw new Error('جمع روش‌های وصول فروش باید ۱۰۰٪ باشد.');d.customCosts.forEach(function(c){if(c.amount<0)throw new Error('هزینه سفارشی نمی‌تواند منفی باشد.');if((c.type==='pct_purchase'||c.type==='pct_sale')&&c.amount>100)throw new Error('هزینه درصدی سفارشی باید حداکثر ۱۰۰٪ باشد.')});Object.keys(d.limits).forEach(function(k){if(d.limits[k]<0)throw new Error('سقف نقد یا اعتبار نمی‌تواند منفی باشد.')})}
 function renderStepper(){var names=[['مشخصات','کالا و قیمت'],['شرایط قرارداد','پرداخت، دریافت و منابع'],['تصمیم','نتیجه و سناریوها']];el('stepper').innerHTML=names.map(function(x,i){var c=state.step===i+1?'active':state.step>i+1?'done':'';return'<div class="step '+c+'"><div class="num">'+(i+1)+'</div><div><div class="t">'+x[0]+'</div><div class="s">'+x[1]+'</div></div></div>'}).join('')}
-function showPage(id){['quickPage','financePage','resultPage','comparePage'].forEach(function(x){el(x).classList.toggle('active',x===id)});if(id==='comparePage'){el('stepper').classList.add('hidden');document.querySelector('.footer').classList.add('hidden')}else{el('stepper').classList.remove('hidden');document.querySelector('.footer').classList.remove('hidden')}}
+function showPage(id){var pane=document.querySelector('.shell');if(pane&&!el(id).classList.contains('active'))pane.scrollTop=0;['quickPage','financePage','resultPage','comparePage'].forEach(function(x){el(x).classList.toggle('active',x===id)});if(id==='comparePage'){el('stepper').classList.add('hidden');document.querySelector('.footer').classList.add('hidden')}else{el('stepper').classList.remove('hidden');document.querySelector('.footer').classList.remove('hidden')}}
 function go(step){state.step=Math.max(1,Math.min(3,step));renderStepper();showPage(step===1?'quickPage':step===2?'financePage':'resultPage');el('prevBtn').style.visibility=step===1?'hidden':'visible';el('nextBtn').textContent=step===1?'شرایط پرداخت و دریافت':step===2?'محاسبه و مشاهده تصمیم':'اصلاح معامله';window.scrollTo(0,0);if(step===2){renderFundingBreakdown();renderSalesBreakdown();refreshTaxFields()}if(step===3)analyze()}
 function renderTrade(){document.querySelectorAll('[data-trade]').forEach(function(b){b.classList.toggle('active',b.dataset.trade===state.tradeType)});el('tradeModeChip').textContent=state.tradeType==='domestic'?'بازرگانی داخلی':state.tradeType==='import'?'واردات':'صادرات';el('foreignSection').classList.toggle('hidden',state.tradeType==='domestic');el('customsField').classList.toggle('hidden',state.tradeType==='export');el('importFreightIncludedField').classList.toggle('hidden',state.tradeType!=='import');if(state.tradeType==='domestic'){if(el('purchaseCurrency').value!=='TOMAN')changeQuotePreserve('purchase','TOMAN|per_ton');if(el('saleCurrency').value!=='TOMAN')changeQuotePreserve('sale','TOMAN|per_ton')}else if(state.tradeType==='import'){if(el('purchaseCurrency').value==='TOMAN'||el('purchaseCurrency').value==='RIAL')changeQuotePreserve('purchase','USD|per_ton');if(el('saleCurrency').value!=='TOMAN')changeQuotePreserve('sale','TOMAN|per_ton')}else{if(el('purchaseCurrency').value!=='TOMAN')changeQuotePreserve('purchase','TOMAN|per_ton');if(el('saleCurrency').value==='TOMAN'||el('saleCurrency').value==='RIAL')changeQuotePreserve('sale','USD|per_ton')}renderForeignTiming();renderFx();if(el('exportInsuranceBase'))refreshTaxFields();liveSummary()}
 function renderForeignTiming(){var custom=el('foreignTimingPreset').value==='custom';['foreignFreightDayField','foreignCustomsDayField','foreignVatDayField'].forEach(function(id){el(id).classList.toggle('hidden',!custom)});el('foreignCustomsDayField').classList.toggle('hidden',!custom||state.tradeType==='export');el('foreignVatDayField').classList.toggle('hidden',!custom||state.tradeType==='export')}
@@ -387,7 +389,7 @@ function renderSensitivity(){
  levels.forEach(function(ly){levels.forEach(function(lx){var c={lx:lx,ly:ly};try{c.input=applySens(applySens(last.d,x,lx,xStep),y,ly,yStep);c.r=lx===0&&ly===0?last.r:simulate(c.input);c.val=metricValue(c.r,m);if(c.val==null||!isFinite(c.val))c.error='این شاخص در این سناریو قابل محاسبه نیست.'}catch(e){c.error=e.message;c.val=null}c.state=c.error?{rank:-1,label:'قابل محاسبه نیست',bg:'#e8edf2',fg:'#475569'}:metricStateV10(c,m,baseVal);cells.push(c)})});
  var baseCell=cells.find(function(c){return c.lx===0&&c.ly===0}),valid=cells.filter(function(c){return !c.error}),invalid=cells.length-valid.length;
  var h='<table class="sens-matrix"><thead><tr><th>'+SENS_PARAMS[y].label+' ↓ / '+SENS_PARAMS[x].label+' →</th>'+levels.map(function(l){return '<th>'+sensLevelLabel(x,l,xStep)+'</th>'}).join('')+'</tr></thead><tbody>';
- levels.forEach(function(ly){h+='<tr><th>'+sensLevelLabel(y,ly,yStep)+'</th>';levels.forEach(function(lx){var c=cells.find(function(z){return z.lx===lx&&z.ly===ly}),limited=c.r&&!c.r.feasible;h+='<td class="sens-cell '+(lx===0&&ly===0?'sens-base ':'')+(limited?'exec-limited':'')+'" style="background:'+c.state.bg+';color:'+c.state.fg+'" title="'+xmlText(c.error||name+': '+metricDisplay(c.val,m))+'"><div>'+metricDisplay(c.val,m)+'</div><small>'+c.state.label+'</small>'+(c.error?'<details><summary>علت</summary>'+xmlText(c.error)+'</details>':'')+'</td>'});h+='</tr>'});
+ levels.forEach(function(ly){h+='<tr><th>'+sensLevelLabel(y,ly,yStep)+'</th>';levels.forEach(function(lx){var c=cells.find(function(z){return z.lx===lx&&z.ly===ly}),limited=c.r&&!c.r.feasible;h+='<td data-rank="'+c.state.rank+'" class="sens-cell '+(lx===0&&ly===0?'sens-base ':'')+(limited?'exec-limited':'')+'" style="background:'+c.state.bg+';color:'+c.state.fg+'" title="'+xmlText(c.error||name+': '+metricDisplay(c.val,m))+'"><div>'+metricDisplay(c.val,m)+'</div><small>'+c.state.label+'</small>'+(c.error?'<details><summary>علت</summary>'+xmlText(c.error)+'</details>':'')+'</td>'});h+='</tr>'});
  h+='</tbody></table><div class="sens-legend"><span class="optimal">هدف / ظرفیت برقرار</span><span class="acceptable">مثبت</span><span class="borderline">مرز / نزدیک سقف</span><span class="poor">منفی / نقض سقف</span><span>خاکستری: نامشخص</span><span>! محدودیت منابع</span></div><p class="note">'+(m==='peak'?'رنگ بر اساس سقف نقدینگی ثبت‌شده است؛ مصرف ۹۰٪ تا ۱۰۰٪ نزدیک سقف محسوب می‌شود.':m==='npv'?'مرز اقتصادی: NPV صفر. رنگ سبز یعنی حاشیه امن خریدِ تعیین‌شده کاربر نیز برقرار است؛ اگر حاشیه هدف صفر باشد، مقادیر مثبت با رنگ آبی نمایش داده می‌شوند.':'رنگ بر اساس علامت سود است؛ مثبت بودن سود یا حاشیه سود به‌تنهایی تأیید اقتصادی یا اجرایی معامله نیست.')+'</p>' ;el('sensitivityMatrix').innerHTML=h;
  var insights=['وضعیت سناریوی فعلی برای '+name+': '+baseCell.state.label+'.'];
  if(!baseCell.error){var ranked=[{param:x,list:valid.filter(function(c){return c.ly===0&&c.lx!==0})},{param:y,list:valid.filter(function(c){return c.lx===0&&c.ly!==0})}].filter(function(a){return a.list.length}).map(function(a){var c=a.list.slice().sort(function(a,b){return m==='peak'?b.val-a.val:a.val-b.val})[0];return {name:SENS_PARAMS[a.param].label,delta:c.val-baseVal}}).sort(function(a,b){return Math.abs(b.delta)-Math.abs(a.delta)}),w=ranked[0];if(w)insights.push('بیشترین تغییر در سناریوهای معتبر انتخاب‌شده: '+w.name+'؛ شدت اثر '+(Math.abs(baseVal)>metricRelativeThreshold(m)?fmtSmart(Math.abs(w.delta/baseVal*100))+'٪':metricDisplay(Math.abs(w.delta),m))+'.');var threshold=valid.filter(function(c){return (c.lx===0||c.ly===0)&&c.state.rank<baseCell.state.rank}).sort(function(a,b){return Math.abs(a.lx)+Math.abs(a.ly)-Math.abs(b.lx)-Math.abs(b.ly)})[0];if(threshold){var parts=[];if(threshold.lx)parts.push(sensLevelLabel(x,threshold.lx,xStep)+' '+SENS_PARAMS[x].label);if(threshold.ly)parts.push(sensLevelLabel(y,threshold.ly,yStep)+' '+SENS_PARAMS[y].label);insights.push(parts.join(' و ')+' وضعیت '+name+' را به '+threshold.state.label+' تغییر می‌دهد.')}}
